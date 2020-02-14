@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_showMenu"
+        android:icon="@drawable/ic_arrow_drop_down_white_24dp"
+        android:title="@string/submenu"
+        app:showAsAction="always"
+        android:orderInCategory="99">
+        <menu>
+            <item
+                android:id="@+id/sub_menu_cambio_llave_maestra_volver"
+                android:icon="@drawable/ic_arrow_back_white_24dp"
+                android:title="@string/volver"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/sub_menu_cambio_llave_maestra_guardar"
+                android:icon="@drawable/ic_save_white_24dp"
+                android:title="@string/guardar"
+                app:showAsAction="never"/>
+        </menu>
+    </item>
+</menu>

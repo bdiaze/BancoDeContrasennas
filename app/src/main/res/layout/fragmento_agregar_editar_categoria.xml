@@ -1,0 +1,36 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center_vertical"
+    tools:context="cl.theroot.passbank.fragmento.FragAgregarEditarCategoria">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/TV_titule"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/agrEdtCateg"
+            android:textColor="@color/letra"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/ET_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/nombreCateg"
+            android:importantForAutofill="no"
+            android:inputType="text|textCapSentences|textNoSuggestions"
+            android:maxLines="1"
+            android:textColor="@color/letra"
+            android:textColorHint="@color/letraAtenuada"
+            android:textSize="17sp" />
+    </LinearLayout>
+</ScrollView>

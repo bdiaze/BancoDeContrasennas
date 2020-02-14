@@ -1,0 +1,182 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="cl.theroot.passbank.fragmento.FragCrearLlaveMaestra">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/bienvenida"
+            android:textColor="@color/letra"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/instruccionCreacion"
+            android:textColor="@color/letra"
+            android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="@string/introNuevaLlave"
+            android:textColor="@color/letra"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/ET_newPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ems="20"
+            android:gravity="center"
+            android:hint="@string/nuevaLlave"
+            android:importantForAutofill="no"
+            android:inputType="textPassword"
+            android:textColor="@color/letra"
+            android:textColorHint="@color/letraAtenuada"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="@string/reintroNuevaLlave"
+            android:textColor="@color/letra"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/ET_newRepPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ems="20"
+            android:gravity="center"
+            android:hint="@string/nuevaLlave"
+            android:importantForAutofill="no"
+            android:inputType="textPassword"
+            android:textColor="@color/letra"
+            android:textColorHint="@color/letraAtenuada"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/B_crear_llave_maestra"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:background="@color/boton"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            android:text="@string/crearLlaveMaestra"
+            android:textColor="@color/letra"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/importDatos"
+            android:textColor="@color/letra"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/descripRespaldo"
+            android:textColor="@color/letra"
+            android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/cuentaSelec"
+            android:textColor="@color/letra"
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/IV_vaciar_usuario"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="8dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/borrarCuenta"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_close_white_24dp" />
+
+            <EditText
+                android:id="@+id/ET_cuenta_seleccionada"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:gravity="center_horizontal"
+                android:hint="@string/clickSelecCuenta"
+                android:importantForAutofill="no"
+                android:inputType="textEmailAddress"
+                android:text=""
+                android:textColor="@color/letra"
+                android:textColorHint="@color/letraAtenuada"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="@string/introLlaveResp"
+            android:textColor="@color/letra"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/ET_respaldoLlaveMaestra"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ems="20"
+            android:gravity="center"
+            android:hint="@string/llaveResp"
+            android:importantForAutofill="no"
+            android:inputType="textPassword"
+            android:textColor="@color/letra"
+            android:textColorHint="@color/letraAtenuada"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+</ScrollView>

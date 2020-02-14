@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_showMenu"
+        android:icon="@drawable/ic_arrow_drop_down_white_24dp"
+        android:title="@string/submenu"
+        app:showAsAction="always"
+        android:orderInCategory="99">
+        <menu>
+            <item
+                android:id="@+id/sub_menu_show_account_back"
+                android:icon="@drawable/ic_arrow_back_white_24dp"
+                android:title="@string/volver"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/sub_menu_show_account_edit"
+                android:icon="@drawable/ic_build_white_24dp"
+                android:title="@string/editar"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/sub_menu_show_account_delete"
+                android:icon="@drawable/ic_delete_white_24dp"
+                android:title="@string/eliminar"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/sub_menu_show_account_record"
+                android:icon="@drawable/ic_history_white_24dp"
+                android:title="@string/historial"
+                app:showAsAction="never"/>
+        </menu>
+    </item>
+</menu>

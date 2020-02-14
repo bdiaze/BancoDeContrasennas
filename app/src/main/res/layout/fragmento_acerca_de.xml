@@ -1,0 +1,27 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="cl.theroot.passbank.fragmento.FragAcercaDe">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/acercaDe"
+        android:textSize="20sp"
+        android:textColor="@color/letra"
+        android:padding="5dp"/>
+
+    <TextView
+        android:id="@+id/acercaDeDetalle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:padding="5dp"
+        android:text="@string/infoDesarrollo"
+        android:textColor="@color/letra"
+        android:textSize="15sp" />
+
+</LinearLayout>

@@ -1,0 +1,148 @@
+<resources>
+    <string name="app_name">Banco de Contraseñas</string>
+
+    <!-- Crear Llave Maestra -->
+    <string name="bienvenida">Bienvenido al Banco de Contraseñas</string>
+    <string name="instruccionCreacion">Para comenzar a usar la aplicación, deberá crear su Llave Maestra, la cual será utilizada para acceder a la aplicación y cifrar los datos sensibles.\n\n¡Es muy importante que no olvide su Llave Maestra, y que la mantenga segura de posibles intrusos!</string>
+    <string name="introNuevaLlave">Introduzca su nueva llave:</string>
+    <string name="nuevaLlave">Nueva Llave Maestra</string>
+    <string name="reintroNuevaLlave">Reintroduzca su nueva llave:</string>
+    <string name="crearLlaveMaestra">¡Crear Llave Maestra!</string>
+    <string name="importDatos">Importar Datos - Opcional</string>
+    <string name="descripRespaldo">Si ya ha usado Banco de Contraseñas con anterioridad, y desea cargar su respaldo creado en Google Drive\n¡Este es el lugar para ello!</string>
+    <string name="cuentaSelec">Cuenta Seleccionada</string>
+    <string name="borrarCuenta" >Borrar Cuenta</string>
+    <string name="clickSelecCuenta">Click para seleccionar una cuenta</string>
+    <string name="introLlaveResp">Introduzca la llave maestra del respaldo:</string>
+    <string name="llaveResp">Llave Maestra del Respaldo</string>
+    <string name="inicioSesionDriveFallido">Falló la conexión con Google Drive</string>
+    <string name="falloDescargaRespaldo">Falló la descarga del respaldo de Google Drive</string>
+    <string name="respaldoNoEncontrado">No se encontró el respaldo de Google Drive</string>
+    <string name="llaveMaestraRespIncorrecta">La Llave Maestra del respaldo no es correcta, favor ingresarla de nuevo.</string>
+    <string name="llaveCreadoYRespaldoCargado">Su Llave Maestra fue creada exitosamente, y su respaldo fue cargado correctamente.</string>
+
+    <!-- Iniciar Sesión -->
+    <string name="introLlaveMaestra">Introduzca su Llave Maestra</string>
+    <string name="contrasenna">Contraseña</string>
+    <string name="ingresar">Ingresar</string>
+    <string name="contrasennaVencida">Contraseña Caducada</string>
+    <string name="detalleContrasennaVencida">La contraseña de su cuenta \"%1$s\" ha caducado, se recomienda su actualización.</string>
+    <string name="detalleContrasennaVencidaConOtras">La contraseña de su cuenta \"%1$s\", junto a otras %2$s contraseñas, se encuentra caducada, se recomienda su actualización.</string>
+
+    <!-- Cuentas -->
+    <string name="listaCuentas">Lista de Cuentas</string>
+    <string name="contrCaducada">Contraseña Sin Actualizar</string>
+    <string name="buscarCuenta">Buscar...</string>
+    <string name="limpiarBusq">Limpiar</string>
+
+    <!-- Detalle Cuenta -->
+    <string name="detCuenta">Detalle de la Cuenta</string>
+    <string name="nombreNoDefin">Error, nombre no definido</string>
+    <string name="descripNoDefin">Error, descripción no definido</string>
+    <string name="contraNoDefin">Error, contraseña no definido</string>
+    <string name="contraCopiada">Se ha copiado la contraseña al portapapeles</string>
+    <string name="clickParaCopiar">Click sobre la contraseña para\ncopiarla al portapapeles...</string>
+
+    <!-- Historial de Contraseñas -->
+    <string name="histCuenta">Historial de Cuenta</string>
+    <string name="histDe">Historial de %1$s</string>
+
+    <!-- Agregar/Editar Cuenta -->
+    <string name="agrEdtCuenta">Agregar/Editar una Cuenta</string>
+    <string name="crearCuenta">Crear una Cuenta</string>
+    <string name="editarCuenta">Editar una Cuenta</string>
+    <string name="nombreCuenta">Nombre</string>
+    <string name="descripCuenta">Descripción</string>
+    <string name="mostOcultContr">Mostrar/Ocultar la contraseña</string>
+    <string name="genContr">Generador de contraseñas\nMantenga apretado para cambiar la modalidad</string>
+    <string name="contrCuenta">Contraseña</string>
+    <string name="valCuenta">Validez</string>
+    <string name="dias">Días</string>
+    <string name="durInf">Para duración infinita: 0 días de validez.</string>
+    <string name="categCuenta">Categorías</string>
+
+    <!-- Categorías -->
+    <string name="listCateg">Lista de Categorías</string>
+
+    <!-- Detalle Categoría -->
+    <string name="detCategoria">Detalle de la Categoría</string>
+    <string name="cuentasAsoc">Cuentas Asociadas</string>
+
+    <!-- Agregar/Editar Categoría -->
+    <string name="agrEdtCateg">Agregar/Editar una Categoría</string>
+    <string name="crearCateg">Crear una Categoría</string>
+    <string name="editCateg">Editar una Categoría</string>
+    <string name="nombreCateg">Nombre</string>
+
+    <!-- Configuración -->
+    <string name="config">Configuración</string>
+
+    <!-- Cambio Llave Maestra -->
+    <string name="cambLlaveMaestra">Cambiar Llave Maestra</string>
+    <string name="introLlaveActual">Introduzca su llave actual:</string>
+    <string name="llaveActual">Llave Maestra Actual</string>
+    <string name="introLlaveCamb">Introduzca su nueva llave:</string>
+    <string name="llaveCambiada">Nueva Llave Maestra</string>
+    <string name="reintroLlaveCamb">Reintroduzca su nueva llave:</string>
+
+    <!-- Exportar -->
+    <string name="respDatos">Respaldar Datos</string>
+    <string name="descripExport">Si desea respaldar sus datos en Google Drive\n¡Este es el lugar para ello!</string>
+    <string name="cambiarCuenta">Para cambiar la cuenta seleccionada,\nhaga click sobre el nombre de la cuenta.</string>
+    <string name="respCreadoExitosamente">¡Tu respaldo fue creado exitosamente!</string>
+    <string name="creacionRespFallida">No se pudo crear tu respaldo</string>
+
+    <!-- Acerca De -->
+    <string name="acercaDe">Acerca De</string>
+    <string name="infoDesarrollo">Banco de Contraseñas 1.0\n
+        Android Jelly Bean\n
+        \n
+        2017\n
+        Benjamín Díaz\n
+        UTFSM\n
+        \n
+        Ícono hecho por <a href="https://www.flaticon.com/authors/pixel-perfect">Pixel Perfect</a>\n
+        de <a href="https://www.flaticon.com/">www.flaticon.com</a>
+    </string>
+
+    <!-- Lista Categorías -->
+    <string name="bajarElemento">Bajar Elemento</string>
+    <string name="subirElemento">Subir Elemento</string>
+
+    <!-- Lista Categorías - Checkbox -->
+    <string name="checkbox">CheckBox</string>
+
+    <!-- Lista Configuración -->
+    <string name="nombreParametro">Nombre Parámetro</string>
+    <string name="valorParametro">Valor Parámetro</string>
+    <string name="valor">Valor</string>
+
+    <!-- Menú Contextual - Generador Contraseñas -->
+    <string name="caracteres">Caracteres</string>
+    <string name="palabras">Palabras</string>
+
+    <!-- Menú Contextual - Cuentas/Categorías -->
+    <string name="editar">Editar</string>
+    <string name="eliminar">Eliminar</string>
+
+    <!-- Menú Principal -->
+    <string name="menu">Menú</string>
+    <string name="cuentas">Cuentas</string>
+    <string name="categorias">Categorías</string>
+    <string name="configuracion">Configuración</string>
+    <string name="acerca">Acerca De</string>
+    <string name="cerrarSesion">Cerrar Sesión</string>
+
+    <!-- Menú Secundario -->
+    <string name="submenu">SubMenú</string>
+    <string name="volver">Volver</string>
+    <string name="guardar">Guardar</string>
+    <string name="agrCategoria">Agregar Categoría</string>
+    <string name="habOrden">Habilitar Orden</string>
+    <string name="cambiarLlave">Cambiar Llave Maestra</string>
+    <string name="respaldar">Respaldar Datos</string>
+    <string name="agrCuenta">Agregar Cuenta</string>
+    <string name="historial">Historial</string>
+    <string name="resp">Respaldar</string>
+    <string name="limpiar">Limpiar</string>
+</resources>

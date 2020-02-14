@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_showMenu"
+        android:icon="@drawable/ic_arrow_drop_down_white_24dp"
+        android:title="@string/submenu"
+        app:showAsAction="always"
+        android:orderInCategory="99">
+        <menu>
+            <item
+                android:id="@+id/sub_menu_detalle_categoria_volver"
+                android:icon="@drawable/ic_arrow_back_white_24dp"
+                android:title="@string/volver"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/sub_menu_detalle_categoria_editar"
+                android:icon="@drawable/ic_build_white_24dp"
+                android:title="@string/editar"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/sub_menu_detalle_categoria_eliminar"
+                android:icon="@drawable/ic_delete_white_24dp"
+                android:title="@string/eliminar"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/sub_menu_detalle_categoria_habilitar_orden"
+                android:icon="@drawable/ic_sort_white_24dp"
+                android:title="@string/habOrden"
+                app:showAsAction="never"
+                android:checkable="true"/>
+        </menu>
+    </item>
+</menu>

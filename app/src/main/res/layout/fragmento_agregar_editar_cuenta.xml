@@ -1,0 +1,148 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="cl.theroot.passbank.fragmento.FragAgregarEditarCuenta">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/TV_titule"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/agrEdtCuenta"
+            android:textColor="@color/letra"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/ET_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/nombreCuenta"
+            android:importantForAutofill="no"
+            android:inputType="text|textCapSentences|textNoSuggestions"
+            android:maxLines="1"
+            android:textColor="@color/letra"
+            android:textColorHint="@color/letraAtenuada"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/ET_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top|start"
+            android:hint="@string/descripCuenta"
+            android:importantForAutofill="no"
+            android:inputType="textCapSentences|textMultiLine|textNoSuggestions"
+            android:minLines="1"
+            android:scrollbars="vertical"
+            android:textColor="@color/letra"
+            android:textColorHint="@color/letraAtenuada"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/IV_passVisibility"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/mostOcultContr"
+                android:src="@drawable/ic_visibility_white_24dp"
+                android:backgroundTint="@color/boton"/>
+
+            <ImageButton
+                android:id="@+id/IV_passGenerator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/genContr"
+                android:src="@drawable/ic_loop_white_24dp"
+                android:backgroundTint="@color/boton"/>
+
+            <EditText
+                android:id="@+id/ET_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/contrCuenta"
+                android:importantForAutofill="no"
+                android:inputType="textPassword"
+                android:textColor="@color/letra"
+                android:textColorHint="@color/letraAtenuada"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/ET_validez"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="4"
+                android:gravity="center"
+                android:hint="@string/valCuenta"
+                android:importantForAutofill="no"
+                android:inputType="number"
+                android:textColor="@color/letra"
+                android:textColorHint="@color/letraAtenuada"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:gravity="center"
+                android:text="@string/dias"
+                android:textColor="@color/letra"
+                android:textSize="15sp" />
+
+            <SeekBar
+                android:id="@+id/SB_validez"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:max="365" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView13"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/durInf"
+            android:textColor="@color/letra"
+            android:textSize="15sp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="10dp" />
+
+        <TextView
+            android:id="@+id/TV_subTitulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/categCuenta"
+            android:textColor="@color/letra"
+            android:textSize="18sp" />
+
+        <ListView
+            android:id="@+id/listview_categories_checkboxs"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+</ScrollView>

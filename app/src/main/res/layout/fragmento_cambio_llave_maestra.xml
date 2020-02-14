@@ -1,0 +1,95 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="cl.theroot.passbank.fragmento.FragCambioLlaveMaestra">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="@string/cambLlaveMaestra"
+            android:textColor="@color/letra"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="@string/introLlaveActual"
+            android:textColor="@color/letra"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/ET_oldPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ems="20"
+            android:gravity="center"
+            android:hint="@string/llaveActual"
+            android:importantForAutofill="no"
+            android:inputType="textPassword"
+            android:textColor="@color/letra"
+            android:textColorHint="@color/letraAtenuada"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="@string/introLlaveCamb"
+            android:textColor="@color/letra"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/ET_newPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ems="20"
+            android:gravity="center"
+            android:hint="@string/llaveCambiada"
+            android:importantForAutofill="no"
+            android:inputType="textPassword"
+            android:textColor="@color/letra"
+            android:textColorHint="@color/letraAtenuada"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="@string/reintroLlaveCamb"
+            android:textColor="@color/letra"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/ET_newRepPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ems="20"
+            android:gravity="center"
+            android:hint="@string/llaveCambiada"
+            android:importantForAutofill="no"
+            android:inputType="textPassword"
+            android:textColor="@color/letra"
+            android:textColorHint="@color/letraAtenuada"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+</ScrollView>
