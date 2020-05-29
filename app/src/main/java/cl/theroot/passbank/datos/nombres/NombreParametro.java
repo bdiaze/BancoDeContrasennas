@@ -17,7 +17,8 @@ public enum NombreParametro {
     SEPARADOR_GENERADOR("Generador: Separador de Palabras"),
     VALIDEZ_DEFECTO("Tiempo de Validez por Defecto"),
     NOMBRE_CATEGORIA_COMPLETA("Nombre de la Categoría General"),
-    SEGUNDOS_PORTAPAPELES("Segundos en Portapapeles");
+    SEGUNDOS_PORTAPAPELES("Segundos en Portapapeles"),
+    SEGUNDOS_CERRAR_SESION("Segundos para Cerrar Sesión");
 
     private final String nombre;
 

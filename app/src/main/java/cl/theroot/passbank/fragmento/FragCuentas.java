@@ -49,7 +49,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class FragCuentas extends CustomFragment {
-    private static final String TAG = "BdC-AdapCuentas";
+    private static final String TAG = "BdC-FragCuentas";
     private AdapCategoriasCuentas adapter;
     private AdapCuentasBusq adapterBusq;
 
@@ -86,6 +86,15 @@ public class FragCuentas extends CustomFragment {
         contrasennaDAO = new ContrasennaDAO(getActivity().getApplicationContext());
 
         fillAccountsInfo();
+
+        // Se obtiene última búsqueda de cuentas para carga automática...
+        if (this.getArguments() != null) {
+            String cuentaBuscada = this.getArguments().getString(ColCuenta.NOMBRE.toString());
+            if (cuentaBuscada != null && cuentaBuscada.trim().length() > 0) {
+                buscarET.setText(cuentaBuscada);
+                buscarCuentas();
+            }
+        }
 
         adapter = new AdapCategoriasCuentas(getActivity(), listaCategorias);
         adapterBusq = new AdapCuentasBusq(getActivity(), resultadosBusqueda);
@@ -316,6 +325,9 @@ public class FragCuentas extends CustomFragment {
     private void buscarCuentas(String busqueda) {
         resultadosBusqueda.clear();
         if (busqueda.trim().length() > 0) {
+            // Se graba última búsqueda generada...
+            actividadPrincipal().actualizarBundleFragmentoActual(ColCuenta.NOMBRE.toString(), busqueda.trim());
+
             for (Cuenta cuenta : cuentaDAO.buscarCuentas(busqueda)) {
                 Contrasenna contrasenna = contrasennaDAO.seleccionarUltimaPorCuenta(cuenta.getNombre());
                 String fecha = "2000/01/01";

@@ -18,7 +18,7 @@ import cl.theroot.passbank.datos.nombres.Tabla;
 public class DBOpenHelper extends SQLiteOpenHelper {
     private static final String TAG = "BdC-DBOpenHelper";
 
-    private static final int VERSION_BASE_DATOS = 3;
+    private static final int VERSION_BASE_DATOS = 4;
     private static DBOpenHelper DBOPOriginal = null;
     private static DBOpenHelper DBOPRespaldo = null;
 
@@ -136,6 +136,9 @@ public class DBOpenHelper extends SQLiteOpenHelper {
             case 2:
                 // Se actualiza la bd a la versión 3...
                 db.execSQL("ALTER TABLE " + Tabla.CUENTA + " ADD " + ColCuenta.VENCIMIENTO_INFORMADO + " INTEGER DEFAULT 0 NOT NULL;");
+                break;
+            case 3:
+                db.execSQL("INSERT INTO " + Tabla.PARAMETRO + " VALUES('" + NombreParametro.SEGUNDOS_CERRAR_SESION + "', '60', 80);");
                 break;
         }
         return versionActual + 1;

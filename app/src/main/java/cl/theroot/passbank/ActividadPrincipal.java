@@ -64,15 +64,11 @@ public class ActividadPrincipal extends AppCompatActivity {
     private final List<Class> listaFragmentos = new ArrayList<>();
     private final List<Bundle> listaBundles = new ArrayList<>();
 
-    private static final int waitTime = 30 * 1000;
-
     private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Log.i(TAG, "onCreate():");
-
         setContentView(R.layout.actividad_principal);
 
         if (savedInstanceState != null) {
@@ -92,13 +88,11 @@ public class ActividadPrincipal extends AppCompatActivity {
                 fragmento.setArguments(bundle);
                 fragmentoActual = fragmento;
             } catch (Exception ex) {
-                Log.e(TAG, "Error al tratar de recrear el fragmento actual", ex);
+                Log.e(TAG, "onCreate(...) - Error al tratar de recrear el fragmento actual.", ex);
             }
         } else {
             userLogOut();
         }
-        //Log.i(TAG, "---" + estadoLogin + ": " + sesionIniciada);
-        //Log.i(TAG, "---" + onStopTime + ": " + onStop);
     }
 
     @Override
@@ -143,12 +137,24 @@ public class ActividadPrincipal extends AppCompatActivity {
 
     @Override
     public void onStart() {
-        //Log.i(TAG, "onStart():");
         if (onStop != null) {
             long onStart = Calendar.getInstance().getTimeInMillis();
             long diff = Math.abs(onStart - onStop);
-            //Log.i(TAG, "---onStart: " + onStart + " onStop: " + onStop + " Diferencia: " + diff);
             onStop = null;
+
+            // Se obtienen los segundos para cierre automático de sesión...
+            ParametroDAO parametroDAO = new ParametroDAO(getApplicationContext());
+            Parametro segundosCerrarSesion = parametroDAO.seleccionarUno(NombreParametro.SEGUNDOS_CERRAR_SESION);
+            int waitTime;
+            try {
+                waitTime = Integer.parseInt(segundosCerrarSesion.getValor()) * 1000;
+            } catch (Exception ex) {
+                Log.e(TAG, "onCreate(...) - Error al convertir los segundos para cierre de sesión automático en numérico, se usará valor por defecto.", ex);
+                waitTime = 30 * 1000;
+            }
+
+            Log.i(TAG, String.format("onStart() - Tiempo transcurrido desde pérdida de enfoque: %d segundos.", diff / 1000));
+            Log.i(TAG, String.format("onStart() - Tiempo configurado para cierre de sesión: %d segundos.", waitTime / 1000));
             if (diff > waitTime) {
                 userLogOut();
             }
@@ -171,6 +177,9 @@ public class ActividadPrincipal extends AppCompatActivity {
         } else {
             Class clase = listaFragmentos.get(listaFragmentos.size() - 1);
             Bundle bundle = listaBundles.get(listaBundles.size() - 1);
+            Log.i(TAG, "onBackPressed() - clase: " + clase);
+            Log.i(TAG, "onBackPressed() - bundle: " + bundle);
+
             if (clase == FragInicioSesion.class) {
                 AlertDialog alertDialog = new AlertDialog.Builder(this).create();
                 alertDialog.setTitle("Cerrar Sesión");
@@ -256,6 +265,16 @@ public class ActividadPrincipal extends AppCompatActivity {
         }
     }
 
+    public void actualizarBundleFragmentoActual(String llave, String valor) {
+        if (fragmentoActual != null) {
+            if (fragmentoActual.getArguments() == null) {
+                fragmentoActual.setArguments(new Bundle());
+            }
+            fragmentoActual.getArguments().remove(llave);
+            fragmentoActual.getArguments().putString(llave, valor);
+        }
+    }
+
     public boolean cambiarFragmento(CustomFragment fragmento) {
         View view = findViewById(R.id.FL_contenedor);
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -266,6 +285,8 @@ public class ActividadPrincipal extends AppCompatActivity {
 
         if (fragmentoActual != null) {
             if (listaFragmentos.size() == 0 || fragmentoActual.getClass() != listaFragmentos.get(listaFragmentos.size() - 1)) {
+                Log.i(TAG, "cambiarFragmento(...) - Fragmento Anterior: " + fragmentoActual.getClass());
+                Log.i(TAG, "cambiarFragmento(...) - Bundle Anterior: " + fragmentoActual.getArguments());
                 listaFragmentos.add(fragmentoActual.getClass());
                 listaBundles.add(fragmentoActual.getArguments());
             }
@@ -300,13 +321,13 @@ public class ActividadPrincipal extends AppCompatActivity {
                     if (listaBundles.get(i) != null) {
                         if ((clase == Categoria.class && listaBundles.get(i).getString(ColCategoria.NOMBRE.toString()).equals(antiguoValor)) || (clase == Cuenta.class && listaBundles.get(i).getString(ColCuenta.NOMBRE.toString()).equals(antiguoValor))) {
                             //Log.i(TAG, "Cambiando bundle...");
-                            Bundle nuevo = new Bundle();
                             if (clase == Categoria.class) {
-                                nuevo.putString(ColCategoria.NOMBRE.toString(), nuevoValor);
+                                listaBundles.get(i).remove(ColCategoria.NOMBRE.toString());
+                                listaBundles.get(i).putString(ColCategoria.NOMBRE.toString(), nuevoValor);
                             } else if (clase == Cuenta.class) {
-                                nuevo.putString(ColCuenta.NOMBRE.toString(), nuevoValor);
+                                listaBundles.get(i).remove(ColCuenta.NOMBRE.toString());
+                                listaBundles.get(i).putString(ColCuenta.NOMBRE.toString(), nuevoValor);
                             }
-                            listaBundles.set(i, nuevo);
                         }
                     }
                 }
