@@ -60,6 +60,8 @@
     <string name="dias">Días</string>
     <string name="durInf">Para duración infinita: 0 días de validez.</string>
     <string name="categCuenta">Categorías</string>
+    <string name="signoSuma">+</string>
+    <string name="nuevaCategoria">Nueva Categoría</string>
 
     <!-- Categorías -->
     <string name="listCateg">Lista de Categorías</string>
@@ -73,6 +75,13 @@
     <string name="crearCateg">Crear una Categoría</string>
     <string name="editCateg">Editar una Categoría</string>
     <string name="nombreCateg">Nombre</string>
+    <string name="errorSinNombre">Error, debe ingresar un nombre para la categoría.</string>
+    <string name="errorNombreReservado">Error, el nombre seleccionado está reservado por la aplicación.</string>
+    <string name="errorNombreUsado">Error, el nombre seleccionado ya está siendo usado por otra categoría.</string>
+    <string name="errorNoSePudoCrearCategoria">Error, no se pudo crear la categoría deseada.</string>
+    <string name="errorNoSePudoEditarCategoria">Error, no se pudo modificar la categoría deseada.</string>
+    <string name="categoriaCreada">Su categoría fue creada exitosamente.</string>
+    <string name="categoriaEditada">Su categoría fue modificada exitosamente.</string>
 
     <!-- Configuración -->
     <string name="config">Configuración</string>

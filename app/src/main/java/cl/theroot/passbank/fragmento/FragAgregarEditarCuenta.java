@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cl.theroot.passbank.ActividadPrincipal;
 import cl.theroot.passbank.Cifrador;
 import cl.theroot.passbank.CustomFragment;
@@ -48,16 +50,34 @@ import cl.theroot.passbank.dominio.Contrasenna;
 import cl.theroot.passbank.dominio.Cuenta;
 import cl.theroot.passbank.dominio.Parametro;
 
-public class FragAgregarEditarCuenta extends CustomFragment implements View.OnClickListener{
+public class FragAgregarEditarCuenta extends CustomFragment {
     private static final String TAG = "BdC-FragAgrEdtCuenta";
     private AdapCategoriasCheckBox adapter;
-    private List<CategoriaSeleccionable> categories;
 
-    private EditText ET_name;
-    private EditText ET_description;
-    private EditText ET_password;
-    private EditText ET_validez;
-    private ImageView IV_passVisibility;
+    @BindView(R.id.TV_titule)
+    TextView TV_titule;
+    @BindView(R.id.ET_name)
+    EditText ET_name;
+    @BindView(R.id.ET_description)
+    EditText ET_description;
+    @BindView(R.id.IV_passVisibility)
+    ImageView IV_passVisibility;
+    @BindView(R.id.IV_passGenerator)
+    ImageView IV_passGenerator;
+    @BindView(R.id.ET_password)
+    EditText ET_password;
+    @BindView(R.id.ET_validez)
+    EditText ET_validez;
+    @BindView(R.id.SB_validez)
+    SeekBar SB_validez;
+    @BindView(R.id.TV_subTitulo)
+    TextView TV_subTitulo;
+    @BindView(R.id.IV_agregarCategoria)
+    ImageView IV_agregarCategoria;
+    @BindView(R.id.ET_nombreNuevaCategoria)
+    EditText ET_nombreNuevaCategoria;
+    @BindView(R.id.listview_categories_checkboxs)
+    ListView listView;
 
     private String oldName;
     private Long oldPasswordID;
@@ -73,16 +93,13 @@ public class FragAgregarEditarCuenta extends CustomFragment implements View.OnCl
     private GeneradorContrasennas genContrasennas;
     private byte modoGenerador = 0;
 
-    //Datos originales
-    private Boolean algunCambio = false;
-    private String nombreOriginal = "";
-    private String descripcionOriginal = "";
-    private String contrasennaOriginal = "";
-    private String validezOriginal = "";
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+
+        View view = inflater.inflate(R.layout.fragmento_agregar_editar_cuenta, container, false);
+        ButterKnife.bind(this, view);
+
         categoriaDAO = new CategoriaDAO(getActivity().getApplicationContext());
         categoriaCuentaDAO = new CategoriaCuentaDAO(getActivity().getApplicationContext());
         contrasennaDAO = new ContrasennaDAO(getActivity().getApplicationContext());
@@ -91,27 +108,29 @@ public class FragAgregarEditarCuenta extends CustomFragment implements View.OnCl
 
         genContrasennas = new GeneradorContrasennas(getActivity().getApplicationContext());
 
-        View view = inflater.inflate(R.layout.fragmento_agregar_editar_cuenta, null);
-        TextView TV_titule = view.findViewById(R.id.TV_titule);
-        TextView TV_subTitulo = view.findViewById(R.id.TV_subTitulo);
-        ET_name = view.findViewById(R.id.ET_name);
-        ET_description = view.findViewById(R.id.ET_description);
-        ET_password = view.findViewById(R.id.ET_password);
-        ET_validez = view.findViewById(R.id.ET_validez);
-        IV_passVisibility = view.findViewById(R.id.IV_passVisibility);
-        IV_passVisibility.setOnClickListener(this);
-        ImageView IV_passGenerator = view.findViewById(R.id.IV_passGenerator);
-        IV_passGenerator.setOnClickListener(this);
+        IV_passVisibility.setOnClickListener(v -> {
+            if (ET_password.getInputType() == 0x00000081) {
+                int pointerPos = ET_password.getSelectionStart();
+                IV_passVisibility.setImageResource(R.drawable.ic_visibility_off_white_24dp);
+                ET_password.setInputType(0x00080001);
+                ET_password.setSelection(pointerPos);
+            } else {
+                int pointerPos = ET_password.getSelectionStart();
+                IV_passVisibility.setImageResource(R.drawable.ic_visibility_white_24dp);
+                ET_password.setInputType(0x00000081);
+                ET_password.setSelection(pointerPos);
+            }
+        });
+        IV_passGenerator.setOnClickListener(v -> {
+            parametroDAO.actualizarUna(new Parametro(NombreParametro.ULTIMO_MODO_GENERADOR.toString(), String.valueOf(modoGenerador), null));
+            if (modoGenerador == 0) {
+                ET_password.setText(genContrasennas.generar(true));
+            } else {
+                ET_password.setText(genContrasennas.generar(false));
+            }
+        });
         registerForContextMenu(IV_passGenerator);
 
-        ListView listView = view.findViewById(R.id.listview_categories_checkboxs);
-        listView.setOnTouchListener((view1, motionEvent) -> {
-            view1.getParent().requestDisallowInterceptTouchEvent(true);
-            return false;
-        });
-
-
-        final SeekBar SB_validez = view.findViewById(R.id.SB_validez);
         SB_validez.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -130,7 +149,6 @@ public class FragAgregarEditarCuenta extends CustomFragment implements View.OnCl
 
             }
         });
-
         ET_validez.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -159,6 +177,49 @@ public class FragAgregarEditarCuenta extends CustomFragment implements View.OnCl
                     SB_validez.setProgress(0);
                 }
             }
+        });
+
+        IV_agregarCategoria.setOnClickListener(v -> {
+            ET_nombreNuevaCategoria.selectAll();
+
+            String nombreNuevaCategoria = ET_nombreNuevaCategoria.getText().toString().trim();
+            if (nombreNuevaCategoria.length() == 0) {
+                CustomToast.Build(this, R.string.errorSinNombre);
+                return;
+            }
+
+            Parametro parCatCompleta = parametroDAO.seleccionarUno(NombreParametro.NOMBRE_CATEGORIA_COMPLETA.toString());
+            if (nombreNuevaCategoria.equals(parCatCompleta.getValor())) {
+                CustomToast.Build(this, R.string.errorNombreReservado);
+                return;
+            }
+
+            Categoria categoriaIdentica = categoriaDAO.seleccionarUna(nombreNuevaCategoria);
+            if (categoriaIdentica != null) {
+                CustomToast.Build(this, R.string.errorNombreUsado);
+                return;
+            }
+
+            Categoria categoria = new Categoria(nombreNuevaCategoria, null);
+            if (categoriaDAO.insertarUna(categoria) == -1) {
+                CustomToast.Build(this, R.string.errorNoSePudoCrearCategoria);
+                return;
+            } else {
+                CustomToast.Build(this, R.string.categoriaCreada);
+            }
+
+            ET_nombreNuevaCategoria.setText(null);
+
+            // Se vuelve a consultar y presentar la lista de categorías...
+            if (adapter != null) {
+                adapter.updateCategorias(fillCategoriesInfo(oldName));
+                setListViewHeightBasedOnChildren(listView);
+            }
+        });
+
+        listView.setOnTouchListener((view1, motionEvent) -> {
+            view1.getParent().requestDisallowInterceptTouchEvent(true);
+            return false;
         });
 
         Bundle bundle = this.getArguments();
@@ -198,7 +259,7 @@ public class FragAgregarEditarCuenta extends CustomFragment implements View.OnCl
             }
         }
 
-        fillCategoriesInfo(oldName);
+        List<CategoriaSeleccionable> categories = fillCategoriesInfo(oldName);
         adapter = new AdapCategoriasCheckBox(getActivity(), categories, this);
         listView.setAdapter(adapter);
         setListViewHeightBasedOnChildren(listView);
@@ -213,77 +274,6 @@ public class FragAgregarEditarCuenta extends CustomFragment implements View.OnCl
             modoGenerador = Byte.parseByte(parametro.getValor());
         }
 
-        //Setear datos para habilitar/deshabilitar el botón guardar
-        algunCambio = false;
-        nombreOriginal = ET_name.getText().toString();
-        ET_name.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                checkearCambios();
-            }
-        });
-        descripcionOriginal = ET_description.getText().toString();
-        ET_description.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                checkearCambios();
-            }
-        });
-        contrasennaOriginal = ET_password.getText().toString();
-        ET_password.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                checkearCambios();
-            }
-        });
-        validezOriginal = ET_validez.getText().toString();
-        ET_validez.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                checkearCambios();
-            }
-        });
-
         return view;
     }
 
@@ -295,8 +285,7 @@ public class FragAgregarEditarCuenta extends CustomFragment implements View.OnCl
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu){
-        menu.findItem(R.id.sub_menu_add_edit_account_save).setEnabled(algunCambio);
+    public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
     }
 
@@ -503,37 +492,8 @@ public class FragAgregarEditarCuenta extends CustomFragment implements View.OnCl
         }
     }
 
-    //Funcionalidad del botón para hacer visible/invisible la contraseña
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.IV_passVisibility:
-                if (ET_password.getInputType() == 0x00000081) {
-                    int pointerPos = ET_password.getSelectionStart();
-                    IV_passVisibility.setImageResource(R.drawable.ic_visibility_off_white_24dp);
-                    ET_password.setInputType(0x00080001);
-                    ET_password.setSelection(pointerPos);
-                }
-                else {
-                    int pointerPos = ET_password.getSelectionStart();
-                    IV_passVisibility.setImageResource(R.drawable.ic_visibility_white_24dp);
-                    ET_password.setInputType(0x00000081);
-                    ET_password.setSelection(pointerPos);
-                }
-                break;
-            case R.id.IV_passGenerator:
-                parametroDAO.actualizarUna(new Parametro(NombreParametro.ULTIMO_MODO_GENERADOR.toString(), String.valueOf(modoGenerador), null));
-                if (modoGenerador == 0) {
-                    ET_password.setText(genContrasennas.generar(true));
-                } else {
-                    ET_password.setText(genContrasennas.generar(false));
-                }
-                break;
-        }
-    }
-
-    private void fillCategoriesInfo(String nombreCuenta) {
-        categories = new ArrayList<>();
+    private List<CategoriaSeleccionable> fillCategoriesInfo(String nombreCuenta) {
+        List<CategoriaSeleccionable> salida = new ArrayList<>();
 
         for (Categoria categoria : categoriaDAO.seleccionarTodas()) {
             CategoriaSeleccionable categoriaSeleccionable = new CategoriaSeleccionable(categoria.getNombre(), categoria.getPosicion(), false);
@@ -543,8 +503,10 @@ public class FragAgregarEditarCuenta extends CustomFragment implements View.OnCl
                     categoriaSeleccionable.setSeleccionado(true);
                 }
             }
-            categories.add(categoriaSeleccionable);
+            salida.add(categoriaSeleccionable);
         }
+
+        return salida;
     }
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {
@@ -557,44 +519,14 @@ public class FragAgregarEditarCuenta extends CustomFragment implements View.OnCl
         View view = null;
         for (int i = 0; i < listAdapter.getCount(); i++) {
             view = listAdapter.getView(i, view, listView);
-            if (i == 0)
+            if (i == 0) {
                 view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
-
+            }
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
             totalHeight += view.getMeasuredHeight();
         }
         ViewGroup.LayoutParams params = listView.getLayoutParams();
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
-    }
-
-    public void checkearCambios() {
-        algunCambio = false;
-        if (!ET_name.getText().toString().trim().equals(nombreOriginal)) {
-            algunCambio = true;
-            getActivity().invalidateOptionsMenu();
-            return;
-        }
-        if (!ET_description.getText().toString().trim().equals(descripcionOriginal)) {
-            algunCambio = true;
-            getActivity().invalidateOptionsMenu();
-            return;
-        }
-        if (!ET_password.getText().toString().equals(contrasennaOriginal)) {
-            algunCambio = true;
-            getActivity().invalidateOptionsMenu();
-            return;
-        }
-        if (!ET_validez.getText().toString().trim().equals(validezOriginal)) {
-            algunCambio = true;
-            getActivity().invalidateOptionsMenu();
-            return;
-        }
-        if (adapter.checkearCambios()) {
-            algunCambio = true;
-            getActivity().invalidateOptionsMenu();
-            return;
-        }
-        getActivity().invalidateOptionsMenu();
     }
 }

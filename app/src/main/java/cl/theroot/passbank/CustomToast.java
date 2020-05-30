@@ -1,11 +1,12 @@
 package cl.theroot.passbank;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.view.Gravity;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
 
 public class CustomToast {
     public static void Build(Fragment fragment, int id) {

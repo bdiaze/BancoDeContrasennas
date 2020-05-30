@@ -326,7 +326,9 @@ public class FragCuentas extends CustomFragment {
         resultadosBusqueda.clear();
         if (busqueda.trim().length() > 0) {
             // Se graba última búsqueda generada...
-            actividadPrincipal().actualizarBundleFragmentoActual(ColCuenta.NOMBRE.toString(), busqueda.trim());
+            if (this.getArguments() == null) { this.setArguments(new Bundle()); }
+            this.getArguments().remove(ColCuenta.NOMBRE.toString());
+            this.getArguments().putString(ColCuenta.NOMBRE.toString(), busqueda.trim());
 
             for (Cuenta cuenta : cuentaDAO.buscarCuentas(busqueda)) {
                 Contrasenna contrasenna = contrasennaDAO.seleccionarUltimaPorCuenta(cuenta.getNombre());

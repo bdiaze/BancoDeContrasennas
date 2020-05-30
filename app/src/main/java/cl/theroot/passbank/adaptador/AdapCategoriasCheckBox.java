@@ -78,7 +78,6 @@ public class AdapCategoriasCheckBox extends BaseAdapter{
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 int i = finalViewHolder.referencia;
                 categorias.get(i).setSeleccionado(buttonView.isChecked());
-                fragmento.checkearCambios();
             }
         });
 
@@ -87,10 +86,12 @@ public class AdapCategoriasCheckBox extends BaseAdapter{
 
     public void updateCategorias(List<CategoriaSeleccionable> categories) {
         this.categorias = categories;
+
         estadosOriginales = new HashMap<>();
         for (CategoriaSeleccionable categoria : this.categorias) {
             estadosOriginales.put(categoria.getNombre(), categoria.isSeleccionado());
         }
+
         notifyDataSetChanged();
     }
 
