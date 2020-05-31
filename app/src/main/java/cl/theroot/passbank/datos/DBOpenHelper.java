@@ -18,7 +18,7 @@ import cl.theroot.passbank.datos.nombres.Tabla;
 public class DBOpenHelper extends SQLiteOpenHelper {
     private static final String TAG = "BdC-DBOpenHelper";
 
-    private static final int VERSION_BASE_DATOS = 4;
+    private static final int VERSION_BASE_DATOS = 6;
     private static DBOpenHelper DBOPOriginal = null;
     private static DBOpenHelper DBOPRespaldo = null;
 
@@ -63,6 +63,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        Log.i(TAG, "onCreate(...) - Se inicia la creación de tablas.");
         db.execSQL("CREATE TABLE " + Tabla.CATEGORIA + "(" +
                 ColCategoria.NOMBRE + " TEXT NOT NULL, " +
                 ColCategoria.POSICION + " INTEGER NOT NULL, " +
@@ -121,7 +122,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.i(TAG, "onUpgrade(...)");
+        Log.i(TAG, String.format("onUpgrade(...) - Se actualiza la base de datos. Versión %d -> %d", oldVersion, newVersion));
         while (oldVersion < newVersion) {
             oldVersion = actualizarUnaVersion(db, oldVersion);
         }
@@ -140,6 +141,35 @@ public class DBOpenHelper extends SQLiteOpenHelper {
             case 3:
                 db.execSQL("INSERT INTO " + Tabla.PARAMETRO + " VALUES('" + NombreParametro.SEGUNDOS_CERRAR_SESION + "', '60', 80);");
                 break;
+            case 4:
+                // Se crean los campos DESCRIPCION, TIPO, MINIMO y MAXIMO para la tabla PARAMETRO...
+                db.execSQL(String.format("ALTER TABLE %s ADD %s TEXT;", Tabla.PARAMETRO, ColParametro.DESCRIPCION));
+                db.execSQL(String.format("ALTER TABLE %s ADD %s TEXT DEFAULT 0;", Tabla.PARAMETRO, ColParametro.TIPO));
+                db.execSQL(String.format("ALTER TABLE %s ADD %s TEXT;", Tabla.PARAMETRO, ColParametro.MINIMO));
+                db.execSQL(String.format("ALTER TABLE %s ADD %s TEXT;", Tabla.PARAMETRO, ColParametro.MAXIMO));
+                break;
+            case 5:
+                // Se actualizan los valores de la columna TIPO de la tabla PARAMETRO...
+                // TIPO 0 -> Caracteres alfanuméricos. Acepta letras, números y caracteres especiales.
+                db.execSQL(String.format("UPDATE %s SET %s = 0 WHERE %s = '%s';", Tabla.PARAMETRO, ColParametro.TIPO, ColParametro.NOMBRE, NombreParametro.SEPARADOR_GENERADOR));
+                db.execSQL(String.format("UPDATE %s SET %s = 0 WHERE %s = '%s';", Tabla.PARAMETRO, ColParametro.TIPO, ColParametro.NOMBRE, NombreParametro.COMPOSICION_GENERADOR));
+                db.execSQL(String.format("UPDATE %s SET %s = 0 WHERE %s = '%s';", Tabla.PARAMETRO, ColParametro.TIPO, ColParametro.NOMBRE, NombreParametro.NOMBRE_CATEGORIA_COMPLETA));
+                // TIPO 1 -> Caracteres númericos enteros positivos. Acepta solo números.
+                db.execSQL(String.format("UPDATE %s SET %s = 1 WHERE %s = '%s';", Tabla.PARAMETRO, ColParametro.TIPO, ColParametro.NOMBRE, NombreParametro.CANT_PALABRAS_GENERADOR));
+                db.execSQL(String.format("UPDATE %s SET %s = 1 WHERE %s = '%s';", Tabla.PARAMETRO, ColParametro.TIPO, ColParametro.NOMBRE, NombreParametro.CANT_CARACTERES_GENERADOR));
+                db.execSQL(String.format("UPDATE %s SET %s = 1 WHERE %s = '%s';", Tabla.PARAMETRO, ColParametro.TIPO, ColParametro.NOMBRE, NombreParametro.VALIDEZ_DEFECTO));
+                db.execSQL(String.format("UPDATE %s SET %s = 1 WHERE %s = '%s';", Tabla.PARAMETRO, ColParametro.TIPO, ColParametro.NOMBRE, NombreParametro.SEGUNDOS_PORTAPAPELES));
+                db.execSQL(String.format("UPDATE %s SET %s = 1 WHERE %s = '%s';", Tabla.PARAMETRO, ColParametro.TIPO, ColParametro.NOMBRE, NombreParametro.SEGUNDOS_CERRAR_SESION));
+
+                // Se actualizan los valores de la columna MINIMO de la tabla PARAMETRO...
+                db.execSQL(String.format("UPDATE %s SET %s = 0 WHERE %s = '%s';", Tabla.PARAMETRO, ColParametro.MINIMO, ColParametro.NOMBRE, NombreParametro.SEPARADOR_GENERADOR));
+                db.execSQL(String.format("UPDATE %s SET %s = 1 WHERE %s = '%s';", Tabla.PARAMETRO, ColParametro.MINIMO, ColParametro.NOMBRE, NombreParametro.COMPOSICION_GENERADOR));
+                db.execSQL(String.format("UPDATE %s SET %s = 1 WHERE %s = '%s';", Tabla.PARAMETRO, ColParametro.MINIMO, ColParametro.NOMBRE, NombreParametro.NOMBRE_CATEGORIA_COMPLETA));
+                db.execSQL(String.format("UPDATE %s SET %s = 1 WHERE %s = '%s';", Tabla.PARAMETRO, ColParametro.MINIMO, ColParametro.NOMBRE, NombreParametro.CANT_PALABRAS_GENERADOR));
+                db.execSQL(String.format("UPDATE %s SET %s = 1 WHERE %s = '%s';", Tabla.PARAMETRO, ColParametro.MINIMO, ColParametro.NOMBRE, NombreParametro.CANT_CARACTERES_GENERADOR));
+                db.execSQL(String.format("UPDATE %s SET %s = 0 WHERE %s = '%s';", Tabla.PARAMETRO, ColParametro.MINIMO, ColParametro.NOMBRE, NombreParametro.VALIDEZ_DEFECTO));
+                db.execSQL(String.format("UPDATE %s SET %s = 0 WHERE %s = '%s';", Tabla.PARAMETRO, ColParametro.MINIMO, ColParametro.NOMBRE, NombreParametro.SEGUNDOS_PORTAPAPELES));
+                db.execSQL(String.format("UPDATE %s SET %s = 0 WHERE %s = '%s';", Tabla.PARAMETRO, ColParametro.MINIMO, ColParametro.NOMBRE, NombreParametro.SEGUNDOS_CERRAR_SESION));
         }
         return versionActual + 1;
     }

@@ -1,11 +1,37 @@
 package cl.theroot.passbank.dominio;
 
+import com.google.gson.Gson;
+
 import cl.theroot.passbank.datos.nombres.NombreParametro;
 
 public class Parametro implements Comparable<Parametro>{
     private String nombre;
     private String valor;
     private Integer posicion;
+    private String descripcion = null;
+    private Integer tipo = 0;
+    private Integer minimo = null;
+    private Integer maximo = null;
+
+    public Parametro(NombreParametro nombreParametro, String valor, Integer posicion, String descripcion, Integer tipo, Integer minimo, Integer maximo) {
+        this.nombre = nombreParametro.toString();
+        this.valor = valor;
+        this.posicion = posicion;
+        this.descripcion = descripcion;
+        this.tipo = tipo;
+        this.minimo = minimo;
+        this.maximo = maximo;
+    }
+
+    public Parametro(String nombre, String valor, Integer posicion, String descripcion, Integer tipo, Integer minimo, Integer maximo) {
+        this.nombre = nombre;
+        this.valor = valor;
+        this.posicion = posicion;
+        this.descripcion = descripcion;
+        this.tipo = tipo;
+        this.minimo = minimo;
+        this.maximo = maximo;
+    }
 
     public Parametro(NombreParametro nombreParametro, String valor, Integer posicion) {
         this.nombre = nombreParametro.toString();
@@ -32,6 +58,12 @@ public class Parametro implements Comparable<Parametro>{
         return buff;
     }
 
+    @Override
+    public String toString() {
+        Gson gson = new Gson();
+        return gson.toJson(this, this.getClass());
+    }
+
     public String getNombre() {
         return nombre;
     }
@@ -54,5 +86,37 @@ public class Parametro implements Comparable<Parametro>{
 
     public void setPosicion(Integer posicion) {
         this.posicion = posicion;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public Integer getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(Integer tipo) {
+        this.tipo = tipo;
+    }
+
+    public Integer getMinimo() {
+        return minimo;
+    }
+
+    public void setMinimo(Integer minimo) {
+        this.minimo = minimo;
+    }
+
+    public Integer getMaximo() {
+        return maximo;
+    }
+
+    public void setMaximo(Integer maximo) {
+        this.maximo = maximo;
     }
 }

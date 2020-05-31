@@ -12,6 +12,11 @@ public class ParametroSeleccionable extends Parametro{
         this.seleccionado = seleccionado;
     }
 
+    public ParametroSeleccionable(String nombre, String valor, Integer posicion, String descripcion, Integer tipo, Integer minimo, Integer maximo, boolean seleccionado) {
+        super(nombre, valor, posicion, descripcion, tipo, minimo, maximo);
+        this.seleccionado = seleccionado;
+    }
+
     public boolean isSeleccionado() {
         return seleccionado;
     }

@@ -24,6 +24,7 @@ import androidx.core.content.res.ResourcesCompat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 
 import butterknife.BindView;
@@ -52,6 +53,7 @@ import cl.theroot.passbank.dominio.Parametro;
 
 public class FragAgregarEditarCuenta extends CustomFragment {
     private static final String TAG = "BdC-FragAgrEdtCuenta";
+    private static final String GRABO = "GRABO";
     private AdapCategoriasCheckBox adapter;
 
     @BindView(R.id.TV_titule)
@@ -92,6 +94,7 @@ public class FragAgregarEditarCuenta extends CustomFragment {
 
     private GeneradorContrasennas genContrasennas;
     private byte modoGenerador = 0;
+    private boolean yaGrabo = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -212,7 +215,9 @@ public class FragAgregarEditarCuenta extends CustomFragment {
 
             // Se vuelve a consultar y presentar la lista de categorías...
             if (adapter != null) {
-                adapter.updateCategorias(fillCategoriesInfo(oldName));
+                List<CategoriaSeleccionable> categorias = adapter.getCategorias();
+                categorias.add(new CategoriaSeleccionable(categoria, true));
+                adapter.updateCategorias(buscarCategoriasUsandoSeleccionAnterior(categorias));
                 setListViewHeightBasedOnChildren(listView);
             }
         });
@@ -222,7 +227,6 @@ public class FragAgregarEditarCuenta extends CustomFragment {
             return false;
         });
 
-        Bundle bundle = this.getArguments();
         oldName = null;
         oldPasswordID = null;
 
@@ -235,6 +239,7 @@ public class FragAgregarEditarCuenta extends CustomFragment {
             ET_validez.setText('0');
         }
 
+        Bundle bundle = this.getArguments();
         if (bundle != null) {
             oldName = bundle.getString(ColCuenta.NOMBRE.toString());
             if (oldName != null) {
@@ -292,9 +297,6 @@ public class FragAgregarEditarCuenta extends CustomFragment {
     //Creación de la funcionalidad del submenu del fragmento
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (!((ActividadPrincipal) getActivity()).isSesionIniciada()) {
-            return false;
-        }
         try {
             switch (item.getItemId()) {
                 case R.id.sub_menu_add_edit_account_back:
@@ -442,10 +444,6 @@ public class FragAgregarEditarCuenta extends CustomFragment {
     //Creación de la funcionalidad del menu contextual
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        if (!((ActividadPrincipal) getActivity()).isSesionIniciada()) {
-            return false;
-        }
-
         switch (item.getItemId()) {
             case R.id.cont_menu_agregar_editar_cuenta_caracteres:
                 item.setChecked(true);
@@ -506,6 +504,25 @@ public class FragAgregarEditarCuenta extends CustomFragment {
             salida.add(categoriaSeleccionable);
         }
 
+        return salida;
+    }
+
+    private List<CategoriaSeleccionable> buscarCategoriasUsandoSeleccionAnterior(List<CategoriaSeleccionable> seleccionAnterior) {
+        // Filtramos solo las categorias seleccionadas...
+        HashSet<CategoriaSeleccionable> soloCategoriasSeleccionadas = new HashSet<>();
+        for (CategoriaSeleccionable categoria : seleccionAnterior) {
+            if (categoria.isSeleccionado()) soloCategoriasSeleccionadas.add(categoria);
+        }
+
+        // Obtenemos todas las categorias, y seleccionamos las que estaban seleccionadas anteriormente...
+        List<CategoriaSeleccionable> salida = new ArrayList<>();
+        for (Categoria categoria : categoriaDAO.seleccionarTodas()) {
+            CategoriaSeleccionable categoriaSeleccionable = new CategoriaSeleccionable(categoria, false);
+            if (soloCategoriasSeleccionadas.contains(categoriaSeleccionable)) {
+                categoriaSeleccionable.setSeleccionado(true);
+            }
+            salida.add(categoriaSeleccionable);
+        }
         return salida;
     }
 

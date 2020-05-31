@@ -48,9 +48,27 @@ public class ParametroDAO extends DAO{
             cursor.moveToFirst();
             do {
                 String nombre = cursor.getString(cursor.getColumnIndex(ColParametro.NOMBRE.toString()));
-                String valor = cursor.getString(cursor.getColumnIndex(ColParametro.VALOR.toString()));
-                Integer posicion = cursor.getInt(cursor.getColumnIndex(ColParametro.POSICION.toString()));
-                resultado.add(new Parametro(nombre, valor, posicion));
+                String valor = null;
+                Integer posicion = null;
+                String descripcion = null;
+                Integer tipo = null;
+                Integer minimo = null;
+                Integer maximo = null;
+
+                if (!cursor.isNull(cursor.getColumnIndex(ColParametro.VALOR.toString())))
+                    valor = cursor.getString(cursor.getColumnIndex(ColParametro.VALOR.toString()));
+                if (!cursor.isNull(cursor.getColumnIndex(ColParametro.POSICION.toString())))
+                    posicion = cursor.getInt(cursor.getColumnIndex(ColParametro.POSICION.toString()));
+                if (!cursor.isNull(cursor.getColumnIndex(ColParametro.DESCRIPCION.toString())))
+                    descripcion = cursor.getString(cursor.getColumnIndex(ColParametro.DESCRIPCION.toString()));
+                if (!cursor.isNull(cursor.getColumnIndex(ColParametro.TIPO.toString())))
+                    tipo = cursor.getInt(cursor.getColumnIndex(ColParametro.TIPO.toString()));
+                if (!cursor.isNull(cursor.getColumnIndex(ColParametro.MINIMO.toString())))
+                    minimo = cursor.getInt(cursor.getColumnIndex(ColParametro.MINIMO.toString()));
+                if (!cursor.isNull(cursor.getColumnIndex(ColParametro.MAXIMO.toString())))
+                    maximo = cursor.getInt(cursor.getColumnIndex(ColParametro.MAXIMO.toString()));
+
+                resultado.add(new Parametro(nombre, valor, posicion, descripcion, tipo, minimo, maximo));
             } while(cursor.moveToNext());
         }
         cursor.close();
@@ -67,9 +85,27 @@ public class ParametroDAO extends DAO{
             cursor.moveToFirst();
             do {
                 String nombre = cursor.getString(cursor.getColumnIndex(ColParametro.NOMBRE.toString()));
-                String valor = cursor.getString(cursor.getColumnIndex(ColParametro.VALOR.toString()));
-                Integer posicion = cursor.getInt(cursor.getColumnIndex(ColParametro.POSICION.toString()));
-                resultado.add(new Parametro(nombre, valor, posicion));
+                String valor = null;
+                Integer posicion = null;
+                String descripcion = null;
+                Integer tipo = null;
+                Integer minimo = null;
+                Integer maximo = null;
+
+                if (!cursor.isNull(cursor.getColumnIndex(ColParametro.VALOR.toString())))
+                    valor = cursor.getString(cursor.getColumnIndex(ColParametro.VALOR.toString()));
+                if (!cursor.isNull(cursor.getColumnIndex(ColParametro.POSICION.toString())))
+                    posicion = cursor.getInt(cursor.getColumnIndex(ColParametro.POSICION.toString()));
+                if (!cursor.isNull(cursor.getColumnIndex(ColParametro.DESCRIPCION.toString())))
+                    descripcion = cursor.getString(cursor.getColumnIndex(ColParametro.DESCRIPCION.toString()));
+                if (!cursor.isNull(cursor.getColumnIndex(ColParametro.TIPO.toString())))
+                    tipo = cursor.getInt(cursor.getColumnIndex(ColParametro.TIPO.toString()));
+                if (!cursor.isNull(cursor.getColumnIndex(ColParametro.MINIMO.toString())))
+                    minimo = cursor.getInt(cursor.getColumnIndex(ColParametro.MINIMO.toString()));
+                if (!cursor.isNull(cursor.getColumnIndex(ColParametro.MAXIMO.toString())))
+                    maximo = cursor.getInt(cursor.getColumnIndex(ColParametro.MAXIMO.toString()));
+
+                resultado.add(new Parametro(nombre, valor, posicion, descripcion, tipo, minimo, maximo));
             } while(cursor.moveToNext());
         }
         cursor.close();
@@ -89,9 +125,28 @@ public class ParametroDAO extends DAO{
         Parametro resultado = null;
         if (cursor.getCount() > 0) {
             cursor.moveToFirst();
-            String valor = cursor.getString(cursor.getColumnIndex(ColParametro.VALOR.toString()));
-            Integer posicion = cursor.getInt(cursor.getColumnIndex(ColParametro.POSICION.toString()));
-            resultado = new Parametro(nombre, valor, posicion);
+
+            String valor = null;
+            Integer posicion = null;
+            String descripcion = null;
+            Integer tipo = null;
+            Integer minimo = null;
+            Integer maximo = null;
+
+            if (!cursor.isNull(cursor.getColumnIndex(ColParametro.VALOR.toString())))
+                valor = cursor.getString(cursor.getColumnIndex(ColParametro.VALOR.toString()));
+            if (!cursor.isNull(cursor.getColumnIndex(ColParametro.POSICION.toString())))
+                posicion = cursor.getInt(cursor.getColumnIndex(ColParametro.POSICION.toString()));
+            if (!cursor.isNull(cursor.getColumnIndex(ColParametro.DESCRIPCION.toString())))
+                descripcion = cursor.getString(cursor.getColumnIndex(ColParametro.DESCRIPCION.toString()));
+            if (!cursor.isNull(cursor.getColumnIndex(ColParametro.TIPO.toString())))
+                tipo = cursor.getInt(cursor.getColumnIndex(ColParametro.TIPO.toString()));
+            if (!cursor.isNull(cursor.getColumnIndex(ColParametro.MINIMO.toString())))
+                minimo = cursor.getInt(cursor.getColumnIndex(ColParametro.MINIMO.toString()));
+            if (!cursor.isNull(cursor.getColumnIndex(ColParametro.MAXIMO.toString())))
+                maximo = cursor.getInt(cursor.getColumnIndex(ColParametro.MAXIMO.toString()));
+
+            resultado = new Parametro(nombre, valor, posicion, descripcion, tipo, minimo, maximo);
         }
         cursor.close();
         //db.close();

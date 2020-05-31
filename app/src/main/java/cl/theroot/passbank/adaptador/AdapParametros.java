@@ -13,21 +13,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import cl.theroot.passbank.R;
-import cl.theroot.passbank.dominio.Parametro;
 import cl.theroot.passbank.dominio.ParametroSeleccionable;
-import cl.theroot.passbank.fragmento.FragConfiguracion;
 
 public class AdapParametros extends BaseAdapter{
     private LayoutInflater inflater;
-    private FragConfiguracion fragConfiguracion;
     private List<ParametroSeleccionable> parametros;
-    private Map<String, String> parametrosOriginales;
 
     private class ViewHolder {
         public TextView nombreParametro;
@@ -35,9 +28,8 @@ public class AdapParametros extends BaseAdapter{
         public Integer referencia;
     }
 
-    public AdapParametros(@NonNull Context context, @NonNull List<ParametroSeleccionable> parametros, @NonNull FragConfiguracion fragConfiguracion) {
+    public AdapParametros(@NonNull Context context, @NonNull List<ParametroSeleccionable> parametros) {
         this.inflater = LayoutInflater.from(context);
-        this.fragConfiguracion = fragConfiguracion;
         updateParametros(parametros);
     }
 
@@ -75,7 +67,7 @@ public class AdapParametros extends BaseAdapter{
             view.setTag(viewHolder);
         }
 
-        if (Arrays.asList(FragConfiguracion.PARAMETROS_NUMERICOS).contains(getItem(i).getNombre())) {
+        if (getItem(i).getTipo() == 1) {
             viewHolder.valorParametro.setInputType(InputType.TYPE_CLASS_NUMBER);
         } else {
             viewHolder.valorParametro.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -111,23 +103,7 @@ public class AdapParametros extends BaseAdapter{
             @Override
             public void afterTextChanged(Editable s) {
                 int i = finalViewHolder.referencia;
-                String texto = "";
-                if (Arrays.asList(FragConfiguracion.PARAMETROS_NO_TRIMEABLES).contains(getItem(i).getNombre())) {
-                    texto = s.toString();
-                } else {
-                    texto = s.toString().trim();
-                }
-                if (Arrays.asList(FragConfiguracion.PARAMETROS_NO_REPETIBLES).contains(getItem(i).getNombre())) {
-                    String nuevoTexto = "";
-                    for (int pos = 0; pos < texto.length(); pos++) {
-                        if (!nuevoTexto.contains(Character.toString(texto.charAt(pos)))) {
-                            nuevoTexto = nuevoTexto + texto.charAt(pos);
-                        }
-                    }
-                    texto = nuevoTexto;
-                }
-                getItem(i).setValor(texto);
-                habilitarCambios();
+                getItem(i).setValor(s.toString());
             }
         });
 
@@ -136,25 +112,10 @@ public class AdapParametros extends BaseAdapter{
 
     public void updateParametros(List<ParametroSeleccionable> parametros) {
         this.parametros = parametros;
-        parametrosOriginales = new HashMap<>();
-        for (Parametro parametro : this.parametros) {
-            parametrosOriginales.put(parametro.getNombre(), parametro.getValor());
-        }
-        fragConfiguracion.habilitarCambios(false);
         notifyDataSetChanged();
     }
 
     public List<ParametroSeleccionable> getParametros() {
         return parametros;
-    }
-
-    private void habilitarCambios() {
-        boolean guardar = false;
-        for (Parametro parametro : parametros) {
-            if (!parametrosOriginales.get(parametro.getNombre()).equals(parametro.getValor())) {
-                guardar = true;
-            }
-        }
-        fragConfiguracion.habilitarCambios(guardar);
     }
 }

@@ -78,8 +78,6 @@ public class FragCrearLlaveMaestra extends CustomFragment implements View.OnClic
     private DriveServiceHelper mDriveServiceHelper;
     private GoogleSignInClient mGoogleSignClient;
 
-    private ParametroDAO parametroDAO;
-
     public FragCrearLlaveMaestra() {
         // Required empty public constructor
     }
@@ -89,8 +87,6 @@ public class FragCrearLlaveMaestra extends CustomFragment implements View.OnClic
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragmento_crear_llave_maestra, container, false);
         ButterKnife.bind(this, view);
-
-        parametroDAO = new ParametroDAO(getActivity().getApplicationContext());
 
         B_crear_llave_maestra.setOnClickListener(this);
         ET_cuentaSeleccionada.setOnClickListener(v -> {
@@ -139,6 +135,7 @@ public class FragCrearLlaveMaestra extends CustomFragment implements View.OnClic
 
             String email = ET_cuentaSeleccionada.getText().toString();
             if (!email.isEmpty()) {
+                Log.i(TAG, "CrearLlaveMaestra.onClick(...) - Iniciando importación de respaldo en Google Drive.");
                 if (llaveMaestraRespaldo.isEmpty()) {
                     ET_llaveMaestraRespaldo.requestFocus();
                     throw new ExcepcionBancoContrasennas("Error - Campo Vacío", "Para cargar su respaldo, debe ingresar la Llave Maestra asociada a dichos datos.");
@@ -154,16 +151,18 @@ public class FragCrearLlaveMaestra extends CustomFragment implements View.OnClic
                 mensajeProgreso.show();
 
                 // Se cierran conexiones abiertas...
+                Log.i(TAG, "CrearLlaveMaestra.onClick(...) - Se cierran conexiones abiertas a las bases de datos.");
                 DBOpenHelper.getInstance(getActivity().getApplicationContext(), NombreBD.BANCO_CONTRASENNAS).cerrarConexiones();
                 DBOpenHelper.getInstance(getActivity().getApplicationContext(), NombreBD.BANCO_CONTRASENNAS_RESPALDO).cerrarConexiones();
                 DBOpenHelperDiccionario.getInstance(getActivity().getApplicationContext()).cerrarConexiones();
 
                 //Se crea, en el dispositivo, el archivo que almacenará la base de datos de respaldo momentáneamente
+                Log.i(TAG, "CrearLlaveMaestra.onClick(...) - Se crea base de datos de respaldo, si no existe.");
                 DBOpenHelper.getInstance(getActivity().getApplicationContext(), NombreBD.BANCO_CONTRASENNAS_RESPALDO);
                 java.io.File dbFileRespaldo = getActivity().getApplicationContext().getDatabasePath(NombreBD.BANCO_CONTRASENNAS_RESPALDO.toString());
                 //Log.i(TAG, "Tamaño del respaldo antes de la descarga: " + dbFileRespaldo.length());
                 if (dbFileRespaldo != null && mDriveServiceHelper != null) {
-                    //i(TAG, "Obteniendo listado de respaldos...");
+                    Log.i(TAG, "CrearLlaveMaestra.onClick(...) - Se consultan los respaldos que existen en Google Drive.");
                     mDriveServiceHelper.queryFiles()
                             .addOnSuccessListener(fileList -> {
                                 //Log.i(TAG, "Listado de respaldos obtenido");
@@ -171,35 +170,32 @@ public class FragCrearLlaveMaestra extends CustomFragment implements View.OnClic
                                 DateTime fechaMasNuevo = null;
                                 String idMasNuevo = null;
                                 for (File file : fileList.getFiles()) {
+                                    Log.i(TAG, String.format("CrearLlaveMaestra.onClick(...) - Leyendo metadata del archivo %s con fecha de creación %s.", file.getId(), file.getCreatedTime()));
                                     if (fechaMasNuevo == null || fechaMasNuevo.getValue() < file.getCreatedTime().getValue()) {
                                         fechaMasNuevo = file.getCreatedTime();
                                         idMasNuevo = file.getId();
                                     }
                                 }
-
-                                //Log.i(TAG, "Respaldo Más Nuevo - ID: " + idMasNuevo);
+                                Log.i(TAG, String.format("CrearLlaveMaestra.onClick(...) - Se determina que último respaldo es el archivo %s con fecha de creación %s.", idMasNuevo, fechaMasNuevo));
 
                                 if (idMasNuevo != null) {
-                                    //Log.i(TAG, "Descargando respaldo de Google Drive...");
+                                    Log.i(TAG, String.format("CrearLlaveMaestra.onClick(...) - Se inicia proceso de descarga del respaldo."));
                                     mDriveServiceHelper.downloadFile(dbFileRespaldo, idMasNuevo)
                                             .addOnSuccessListener(salida -> {
-                                                //Log.i(TAG, "Respaldo descargado exitosamente");
-                                                //Log.i(TAG, "Tamaño del respaldo después de la descarga: " + dbFileRespaldo.length());
-
                                                 //Validar que la contraseña maestra ingresada, para el respaldo, es correcta
+                                                Log.i(TAG, String.format("CrearLlaveMaestra.onClick(...) - Se inicializa archivo de respaldo descargado como SQLiteOpenHelper."));
                                                 ParametroDAO parametroDAORespaldo = new ParametroDAO(getActivity().getApplicationContext(), true);
+
+                                                Log.i(TAG, String.format("CrearLlaveMaestra.onClick(...) - Se valida que llave maestra ingresada para el respaldo sea correcta."));
                                                 Parametro parSaltHash = parametroDAORespaldo.seleccionarUno(NombreParametro.SAL_HASH);
                                                 Parametro parResultHash = parametroDAORespaldo.seleccionarUno(NombreParametro.RESULTADO_HASH);
                                                 String hash = Cifrador.genHashedPass(llaveMaestraRespaldo, parSaltHash.getValor())[1];
-
-                                                //Log.i(TAG, "Hash Original:  " + parResultHash.getValor());
-                                                //Log.i(TAG, "Hash Ingresado: " + hash);
 
                                                 if (!parResultHash.getValor().equals(hash)) {
                                                     // Se cierran conexiones abiertas...
                                                     DBOpenHelper.getInstance(getActivity().getApplicationContext(), NombreBD.BANCO_CONTRASENNAS_RESPALDO).cerrarConexiones();
                                                     DBOpenHelper.deleteBackup(getActivity().getApplicationContext());
-                                                    Log.e(TAG, "La Llave Maestra del Respaldo no es correcta");
+                                                    Log.e(TAG, "CrearLlaveMaestra.onClick(...) - Error, la llave maestra del respaldo no es correcta.");
                                                     mensajeProgreso.dismiss();
                                                     getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
                                                     CustomToast.Build(this, R.string.llaveMaestraRespIncorrecta);
@@ -208,57 +204,59 @@ public class FragCrearLlaveMaestra extends CustomFragment implements View.OnClic
                                                     return;
                                                 }
 
-                                                //Se obtiene la llave de encriptación del respaldo
+                                                // Se obtiene la llave de encriptación del respaldo...
+                                                Log.i(TAG, String.format("CrearLlaveMaestra.onClick(...) - Se determina antigua llave de encriptación del respaldo."));
                                                 Parametro parSaltEncr = parametroDAORespaldo.seleccionarUno(NombreParametro.SAL_ENCRIPTACION);
                                                 String antiguaLlaveEncr = Cifrador.genHashedPass(llaveMaestraRespaldo, parSaltEncr.getValor())[1];
 
-                                                // Se cierran conexiones abiertas...
-                                                DBOpenHelper.getInstance(getActivity().getApplicationContext(), NombreBD.BANCO_CONTRASENNAS).cerrarConexiones();
-
-                                                //Recreamos el archivo original
+                                                // Recreamos el archivo original...
+                                                Log.i(TAG, String.format("CrearLlaveMaestra.onClick(...) - Se vuelve a crear archivo de la base de datos."));
                                                 DBOpenHelper.deleteOriginal(getActivity().getApplicationContext());
                                                 DBOpenHelper.getInstance(getActivity().getApplicationContext(), NombreBD.BANCO_CONTRASENNAS);
 
-                                                //Se copian los datos del archivo local momentáneo, a la base de datos de la aplicación
-                                                CategoriaDAO.cargarRespaldo(getActivity().getApplicationContext(), NombreBD.BANCO_CONTRASENNAS_RESPALDO, NombreBD.BANCO_CONTRASENNAS);
-                                                CuentaDAO.cargarRespaldo(getActivity().getApplicationContext(), NombreBD.BANCO_CONTRASENNAS_RESPALDO, NombreBD.BANCO_CONTRASENNAS);
-                                                ParametroDAO.cargarRespaldo(getActivity().getApplicationContext(), NombreBD.BANCO_CONTRASENNAS_RESPALDO, NombreBD.BANCO_CONTRASENNAS);
-                                                CategoriaCuentaDAO.cargarRespaldo(getActivity().getApplicationContext(), NombreBD.BANCO_CONTRASENNAS_RESPALDO, NombreBD.BANCO_CONTRASENNAS);
-                                                ContrasennaDAO.cargarRespaldo(getActivity().getApplicationContext(), NombreBD.BANCO_CONTRASENNAS_RESPALDO, NombreBD.BANCO_CONTRASENNAS);
+                                                // Se copian los datos del archivo local momentáneo, a la base de datos de la aplicación...
+                                                Log.i(TAG, String.format("CrearLlaveMaestra.onClick(...) - Se copian datos de la base de datos de respaldo a la original."));
+                                                CategoriaDAO.cargarRespaldo(getApplicationContext(), NombreBD.BANCO_CONTRASENNAS_RESPALDO, NombreBD.BANCO_CONTRASENNAS);
+                                                CuentaDAO.cargarRespaldo(getApplicationContext(), NombreBD.BANCO_CONTRASENNAS_RESPALDO, NombreBD.BANCO_CONTRASENNAS);
+                                                ParametroDAO.cargarRespaldo(getApplicationContext(), NombreBD.BANCO_CONTRASENNAS_RESPALDO, NombreBD.BANCO_CONTRASENNAS);
+                                                CategoriaCuentaDAO.cargarRespaldo(getApplicationContext(), NombreBD.BANCO_CONTRASENNAS_RESPALDO, NombreBD.BANCO_CONTRASENNAS);
+                                                ContrasennaDAO.cargarRespaldo(getApplicationContext(), NombreBD.BANCO_CONTRASENNAS_RESPALDO, NombreBD.BANCO_CONTRASENNAS);
 
                                                 // Se cierran conexiones abiertas...
+                                                Log.i(TAG, String.format("CrearLlaveMaestra.onClick(...) - Se copian datos de la base de datos de respaldo a la original."));
                                                 DBOpenHelper.getInstance(getActivity().getApplicationContext(), NombreBD.BANCO_CONTRASENNAS_RESPALDO).cerrarConexiones();
-
-                                                //Se elimina el archivo local momentáneo
                                                 DBOpenHelper.deleteBackup(getActivity().getApplicationContext());
 
                                                 //Se crea la llave maestra
+                                                Log.i(TAG, String.format("CrearLlaveMaestra.onClick(...) - Se crea nueva llave de encriptación, y hash correspondientes."));
                                                 String[] saltYHash = Cifrador.genHashedPass(newPass, null);
                                                 String saltEncr = Cifrador.genSalt();
-
-                                                //Se reencriptan las contraseñas
                                                 String llaveEncrNueva = Cifrador.genHashedPass(newPass, saltEncr)[1];
+
+                                                Log.i(TAG, String.format("CrearLlaveMaestra.onClick(...) - Se reencriptan las contraseñas almacenadas con la nueva llave de encriptación."));
                                                 ContrasennaDAO contrasennaDAO = new ContrasennaDAO(getActivity().getApplicationContext());
                                                 for (Contrasenna contrasenna : contrasennaDAO.seleccionarTodas()) {
                                                     String valorDesencriptado = Cifrador.desencriptar(contrasenna.getValor(), antiguaLlaveEncr);
                                                     String valorEncriptado = Cifrador.encriptar(valorDesencriptado, llaveEncrNueva);
                                                     contrasenna.setValor(valorEncriptado);
                                                     if (contrasennaDAO.actualizarUna(contrasenna) != 1) {
-                                                        Log.e(TAG, "Contraseña ID: " + contrasenna.getId() + " no reencriptada!");
+                                                        Log.e(TAG, "CrearLlaveMaestra.onClick(...) - Hubo un error al actualizar el valor de la contraseña ID: " + contrasenna.getId());
                                                     }
                                                 }
 
                                                 //Se guarda la llave maestra
+                                                Log.i(TAG, String.format("CrearLlaveMaestra.onClick(...) - Se almacenan los nuevos valores de la llave de encriptación y hashes."));
                                                 parSaltHash = new Parametro(NombreParametro.SAL_HASH, saltYHash[0], null);
                                                 parResultHash = new Parametro(NombreParametro.RESULTADO_HASH, saltYHash[1], null);
                                                 parSaltEncr = new Parametro(NombreParametro.SAL_ENCRIPTACION, saltEncr, null);
 
-                                                parametroDAO = new ParametroDAO(getActivity().getApplicationContext());
+                                                ParametroDAO parametroDAO = new ParametroDAO(getApplicationContext());
                                                 if (parametroDAO.actualizarUna(parSaltHash) > 0) {
                                                     if (parametroDAO.actualizarUna(parResultHash) > 0) {
                                                         if (parametroDAO.actualizarUna(parSaltEncr) > 0) {
                                                             mensajeProgreso.dismiss();
                                                             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+                                                            Log.i(TAG, String.format("CrearLlaveMaestra.onClick(...) - Respaldo cargado exitosamente."));
                                                             CustomToast.Build(this, R.string.llaveCreadoYRespaldoCargado);
                                                             ((ActividadPrincipal) getActivity()).cambiarFragmento(new FragInicioSesion());
                                                         }
@@ -266,20 +264,20 @@ public class FragCrearLlaveMaestra extends CustomFragment implements View.OnClic
                                                 }
                                             })
                                             .addOnFailureListener(exception -> {
-                                                Log.e(TAG, "Error al descargar el respaldo", exception);
+                                                Log.e(TAG, "CrearLlaveMaestra.onClick(...) - Error al descargar el respaldo", exception);
                                                 mensajeProgreso.dismiss();
                                                 getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
                                                 CustomToast.Build(this, R.string.falloDescargaRespaldo);
                                             });
                                 } else {
-                                    Log.e(TAG, "No se encontró un respaldo en Google Drive");
+                                    Log.e(TAG, "CrearLlaveMaestra.onClick(...) - No se encontró un respaldo en Google Drive");
                                     mensajeProgreso.dismiss();
                                     getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
                                     CustomToast.Build(this, R.string.respaldoNoEncontrado);
                                 }
                             })
                             .addOnFailureListener(exception -> {
-                                Log.e(TAG, "Error al obtener listado de respaldos", exception);
+                                Log.e(TAG, "CrearLlaveMaestra.onClick(...) - Error al obtener listado de respaldos", exception);
                                 mensajeProgreso.dismiss();
                                 getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
                                 CustomToast.Build(this, R.string.falloDescargaRespaldo);
@@ -294,6 +292,7 @@ public class FragCrearLlaveMaestra extends CustomFragment implements View.OnClic
                 Parametro parHash = new Parametro(NombreParametro.RESULTADO_HASH.toString(), saltYHash[1], null);
                 Parametro parSaltEncr = new Parametro(NombreParametro.SAL_ENCRIPTACION.toString(), saltEncr, null);
 
+                ParametroDAO parametroDAO = new ParametroDAO(getApplicationContext());
                 if (parametroDAO.actualizarUna(parSalt) > 0) {
                     if (parametroDAO.actualizarUna(parHash) > 0) {
                         if (parametroDAO.actualizarUna(parSaltEncr) > 0) {
@@ -304,6 +303,7 @@ public class FragCrearLlaveMaestra extends CustomFragment implements View.OnClic
                 }
             }
         } catch (ExcepcionBancoContrasennas ex) {
+            Log.i(TAG, String.format("CrearLlaveMaestra.onClick(...) - Error al crear llave maestra. Mensaje: %s", ex.getMensaje()));
             AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
             alertDialog.setTitle(ex.getTitulo());
             alertDialog.setMessage(ex.getMensaje());

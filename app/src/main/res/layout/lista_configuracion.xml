@@ -23,12 +23,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:hint="@string/valor"
         android:imeOptions="actionDone"
+        android:importantForAutofill="no"
         android:inputType="text|textNoSuggestions"
         android:text="@string/valorParametro"
-        android:hint="@string/valor"
-        android:importantForAutofill="no"
         android:textColor="@color/letra"
+        android:textColorHint="@color/letraAtenuada"
         android:textSize="15sp" />
 
 </LinearLayout>

@@ -15,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -61,8 +63,8 @@ public class ActividadPrincipal extends AppCompatActivity {
     private boolean sesionIniciada;
     private Long onStop;
     private String llaveEncrip = null;
-    private final List<Class> listaFragmentos = new ArrayList<>();
-    private final List<Bundle> listaBundles = new ArrayList<>();
+    private List<Class> listaFragmentos = new ArrayList<>();
+    private List<Bundle> listaBundles = new ArrayList<>();
 
     private Menu menu;
 
@@ -76,10 +78,10 @@ public class ActividadPrincipal extends AppCompatActivity {
             llaveEncrip = savedInstanceState.getString(llaveEncriptacion);
             onStop = savedInstanceState.getLong(onStopTime);
             if (savedInstanceState.getStringArrayList(historialFragmentos) != null) {
-                stringsToListaFragmentos(savedInstanceState.getStringArrayList(historialFragmentos));
+                listaFragmentos = stringsToListaFragmentos(savedInstanceState.getStringArrayList(historialFragmentos));
             }
             if (savedInstanceState.getStringArrayList(historialBundles) != null) {
-                stringsToListaBundles(savedInstanceState.getStringArrayList(historialBundles));
+                listaBundles = stringsToListaBundles(savedInstanceState.getStringArrayList(historialBundles));
             }
             Class clase = stringToClass(savedInstanceState.getString(ultimoFragmento));
             Bundle bundle = stringToBundle(savedInstanceState.getString(ultimoBundle));
@@ -96,51 +98,47 @@ public class ActividadPrincipal extends AppCompatActivity {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        if (onStop == null) {
-            onStop = Calendar.getInstance().getTimeInMillis();
-        }
-        //Log.i(TAG, "onSaveInstanceState: ");
-        //Log.i(TAG, "---" + estadoLogin + ": " + sesionIniciada);
-        //Log.i(TAG, "---" + onStopTime + ": " + onStop);
-        savedInstanceState.putBoolean(estadoLogin, sesionIniciada);
-        savedInstanceState.putString(llaveEncriptacion, llaveEncrip);
-        savedInstanceState.putLong(onStopTime, onStop);
-
-        //Almacenar las listas de historiales
-        savedInstanceState.putStringArrayList(historialFragmentos, listaFragmentoToStrings());
-        savedInstanceState.putStringArrayList(historialBundles, listaBundlesToStrings());
-
-        //Almacenar el fragmento actual
-        savedInstanceState.putString(ultimoFragmento, classToString(fragmentoActual.getClass()));
-        savedInstanceState.putString(ultimoBundle, bundleToString(fragmentoActual.getArguments()));
-
-        super.onSaveInstanceState(savedInstanceState);
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        /*Fragment frg = getFragmentManager().findFragmentById(R.id.FL_contenedor);
-        if (frg != null) {
-            frg.onActivityResult(requestCode, resultCode, data);
-        }*/
     }
 
     @Override
     public void onStop() {
-        //Log.i(TAG, "onStop():");
+        Log.i(TAG, "onStop() - Se inicia etapa onStop del ciclo de vida de la aplicación.");
         onStop = Calendar.getInstance().getTimeInMillis();
-        //Log.i(TAG, "---onStop: " + onStop);
+        Log.i(TAG, String.format("onStop() - Se setea la variable onStop con el valor %d.", onStop));
         super.onStop();
+        Log.i(TAG, "onStop() - Se termina la etapa onStop.");
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        Log.i(TAG, "onSaveInstanceState(...) - Se inicia etapa onSaveInstanceState del ciclo de vida de la aplicación.");
+
+        savedInstanceState.putBoolean(estadoLogin, sesionIniciada);
+        savedInstanceState.putString(llaveEncriptacion, llaveEncrip);
+        savedInstanceState.putLong(onStopTime, onStop);
+        Log.i(TAG, String.format("onSaveInstanceState(...) - Se guarda el estado de la variable sesionIniciada con valor %s.", sesionIniciada));
+        Log.i(TAG, String.format("onSaveInstanceState(...) - Se guarda el estado de la variable onStop con valor %d: ", onStop));
+
+        //Almacenar las listas de historiales
+        savedInstanceState.putStringArrayList(historialFragmentos, new ArrayList<>(listaFragmentoToStrings(listaFragmentos)));
+        savedInstanceState.putStringArrayList(historialBundles, new ArrayList<>(listaBundlesToStrings(listaBundles)));
+
+        //Almacenar el fragmento actual
+        savedInstanceState.putString(ultimoFragmento, fragmentoActual.getClass().getName());
+        savedInstanceState.putString(ultimoBundle, bundleToString(fragmentoActual.getArguments()));
+
+        super.onSaveInstanceState(savedInstanceState);
+        Log.i(TAG, "onSaveInstanceState(...) - Se termina etapa onSaveInstanceState.");
     }
 
     @Override
     public void onStart() {
         if (onStop != null) {
-            long onStart = Calendar.getInstance().getTimeInMillis();
-            long diff = Math.abs(onStart - onStop);
-            onStop = null;
+            // Se obtiene el tiempo transcurrido desde que no se visualiza la ventana...
+            long tiempoActual = Calendar.getInstance().getTimeInMillis();
+            long diff = Math.abs(tiempoActual - onStop);
 
             // Se obtienen los segundos para cierre automático de sesión...
             ParametroDAO parametroDAO = new ParametroDAO(getApplicationContext());
@@ -153,18 +151,26 @@ public class ActividadPrincipal extends AppCompatActivity {
                 waitTime = 30 * 1000;
             }
 
-            Log.i(TAG, String.format("onStart() - Tiempo transcurrido desde pérdida de enfoque: %d segundos.", diff / 1000));
-            Log.i(TAG, String.format("onStart() - Tiempo configurado para cierre de sesión: %d segundos.", waitTime / 1000));
+            Log.i(TAG, String.format("onStart() - onStop: %d", onStop));
+            Log.i(TAG, String.format("onStart() - tiempoActual: %d", tiempoActual));
+            Log.i(TAG, String.format("onStart() - Tiempo transcurrido desde pérdida de enfoque: %f segundos.", diff / 1000f));
+            Log.i(TAG, String.format("onStart() - Tiempo configurado para cierre de sesión: %f segundos.", waitTime / 1000f));
+
+            // Si la diferencia es mayor a la esperada, se cierra sesión...
             if (diff > waitTime) {
                 userLogOut();
             }
+
+            onStop = null;
         }
         super.onStart();
     }
 
     @Override
     public void onBackPressed() {
+        Log.i(TAG, "onBackPressed() - Se inicia proceso para volver al fragmento anterior.");
         if (listaFragmentos.isEmpty()) {
+            Log.i(TAG, "onBackPressed() - El historial está vacío por lo cuál se consulta si se desea cerrar la aplicación.");
             AlertDialog alertDialog = new AlertDialog.Builder(this).create();
             alertDialog.setTitle("Cerrar la Aplicación");
             alertDialog.setMessage("Está a punto de cerrar la aplicación, ¿Desea continuar?");
@@ -177,10 +183,10 @@ public class ActividadPrincipal extends AppCompatActivity {
         } else {
             Class clase = listaFragmentos.get(listaFragmentos.size() - 1);
             Bundle bundle = listaBundles.get(listaBundles.size() - 1);
-            Log.i(TAG, "onBackPressed() - clase: " + clase);
-            Log.i(TAG, "onBackPressed() - bundle: " + bundle);
+            Log.i(TAG, String.format("onBackPressed() - Se determina la pantalla anterior. Fragmento anterior: %s - Bundle: %s.", clase, bundle));
 
             if (clase == FragInicioSesion.class) {
+                Log.i(TAG, "onBackPressed() - Como la pantalla anterior es la de inicio de sesión, se consulta si desea cerrar sesión.");
                 AlertDialog alertDialog = new AlertDialog.Builder(this).create();
                 alertDialog.setTitle("Cerrar Sesión");
                 alertDialog.setMessage("Está a punto de cerrar sesión, ¿Desea continuar?");
@@ -190,28 +196,19 @@ public class ActividadPrincipal extends AppCompatActivity {
                     dialog.dismiss();
                 });
                 alertDialog.show();
-                return;
-            }
-            listaFragmentos.remove(listaFragmentos.size() - 1);
-            listaBundles.remove(listaBundles.size() - 1);
-            try {
-                CustomFragment fragmento = (CustomFragment) clase.getConstructor().newInstance();
-                fragmento.setArguments(bundle);
-
-                View view = findViewById(R.id.FL_contenedor);
-                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-
-                FragmentTransaction fragmentTransaction = administradorFragmentos.beginTransaction();
-                fragmentTransaction.replace(R.id.FL_contenedor, fragmento);
-                fragmentTransaction.commit();
-                fragmentoActual = fragmento;
-                System.out.println(listaFragmentos);
-            } catch(Exception ex) {
-                ex.printStackTrace();
+            } else {
+                Log.i(TAG, "onBackPressed() - Se elimina del historial el fragmento al que se cambiará, y se realiza el cambio.");
+                listaFragmentos.remove(listaFragmentos.size() - 1);
+                listaBundles.remove(listaBundles.size() - 1);
+                try {
+                    CustomFragment fragmento = (CustomFragment) clase.getConstructor().newInstance();
+                    fragmento.setArguments(bundle);
+                    cambiarFragmento(fragmento, false);
+                } catch (Exception ex) {
+                    Log.e(TAG, "onBackPressed() - Ocurrió un error al volver a la pantalla anterior.", ex);
+                }
             }
         }
-        //super.onBackPressed();
     }
 
     //Creación del menú de la aplicación
@@ -265,41 +262,34 @@ public class ActividadPrincipal extends AppCompatActivity {
         }
     }
 
-    public void actualizarBundleFragmentoActual(String llave, String valor) {
-        if (fragmentoActual != null) {
-            if (fragmentoActual.getArguments() == null) {
-                fragmentoActual.setArguments(new Bundle());
-            }
-            fragmentoActual.getArguments().remove(llave);
-            fragmentoActual.getArguments().putString(llave, valor);
-        }
+    public boolean cambiarFragmento(CustomFragment fragmento) {
+        return cambiarFragmento(fragmento, true);
     }
 
-    public boolean cambiarFragmento(CustomFragment fragmento) {
+    public boolean cambiarFragmento(CustomFragment fragmento, boolean registraHistorial) {
+        Log.i(TAG, String.format("cambiarFragmento(...) - Se inicia el proceso para cambiar fragmentos - Siguiente Fragmento: %s - Bundle: %s.", fragmento.getClass(), fragmento.getArguments()));
         View view = findViewById(R.id.FL_contenedor);
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
-        FragmentTransaction fragmentTransaction = administradorFragmentos.beginTransaction();
-        fragmentTransaction.replace(R.id.FL_contenedor, fragmento);
-
-        if (fragmentoActual != null) {
-            if (listaFragmentos.size() == 0 || fragmentoActual.getClass() != listaFragmentos.get(listaFragmentos.size() - 1)) {
-                Log.i(TAG, "cambiarFragmento(...) - Fragmento Anterior: " + fragmentoActual.getClass());
-                Log.i(TAG, "cambiarFragmento(...) - Bundle Anterior: " + fragmentoActual.getArguments());
-                listaFragmentos.add(fragmentoActual.getClass());
-                listaBundles.add(fragmentoActual.getArguments());
-            }
-        }
+        // Se agrega el fragmento actual al listado histórico, o se limpia dicho listado si el siguiente fragmento es el de inicio de sesión...
         if (fragmento instanceof FragInicioSesion) {
+            Log.i(TAG, "cambiarFragmento(...) - Se limpia el historial de fragmentos y bundles.");
             listaFragmentos.clear();
             listaBundles.clear();
+        } else if (registraHistorial && fragmentoActual != null && (listaFragmentos.size() == 0 || fragmentoActual.getClass() != listaFragmentos.get(listaFragmentos.size() - 1))) {
+            Log.i(TAG, String.format("cambiarFragmento(...) - Se agrega fragmento actual al historial - Fragmento: %s - Bundle: %s.",  fragmentoActual.getClass(), fragmentoActual.getArguments()));
+            listaFragmentos.add(fragmentoActual.getClass());
+            listaBundles.add(fragmentoActual.getArguments());
         }
 
+        // Se cambia el fragmento actual por el siguiente...
+        FragmentTransaction fragmentTransaction = administradorFragmentos.beginTransaction();
+        fragmentTransaction.replace(R.id.FL_contenedor, fragmento);
         fragmentTransaction.commit();
         fragmentoActual = fragmento;
 
-        //Log.i(TAG, listaFragmentos.toString());
+        Log.i(TAG, "cambiarFragmento(...) - Se termina el proceso para cambiar fragmentos.");
         return true;
     }
 
@@ -416,6 +406,7 @@ public class ActividadPrincipal extends AppCompatActivity {
     }
 
     public void userLogOut() {
+        Log.i(TAG, "userLogOut() - Se cierra la sesión del usuario.");
         sesionIniciada = false;
         llaveEncrip = null;
         if (menu != null) {
@@ -423,58 +414,28 @@ public class ActividadPrincipal extends AppCompatActivity {
         }
         ParametroDAO parametroDAO = new ParametroDAO(getApplicationContext());
         Parametro parametro = parametroDAO.seleccionarUno(NombreParametro.RESULTADO_HASH.toString());
-        if (parametro != null) {
-            if ("".equals(parametro.getValor())) {
-                cambiarFragmento(new FragCrearLlaveMaestra());
-                return;
-            }
+        if (parametro != null && parametro.getValor().length() == 0) {
+            cambiarFragmento(new FragCrearLlaveMaestra());
+            return;
         }
 
         cambiarFragmento(new FragInicioSesion());
     }
 
-    //Se transforma el historial de fragmentos en una lista de strings
-    private ArrayList<String> listaFragmentoToStrings() {
-        ArrayList<String> resultado = new ArrayList<>();
-        for (Class clase : listaFragmentos) {
-            resultado.add(classToString(clase));
+    private List<String> listaFragmentoToStrings(List<Class> clases) {
+        List<String> salida = new ArrayList<>();
+        for (Class clase : clases) {
+            salida.add(clase.getName());
         }
-        return resultado;
+        return salida;
     }
 
-    private String classToString(Class clase) {
-        return clase.getName();
-    }
-
-    //Se transforma el historial de bundles en una lista de strings
-    private ArrayList<String> listaBundlesToStrings() {
-        ArrayList<String> resultado = new ArrayList<>();
-        for (Bundle bundle : listaBundles) {
-            resultado.add(bundleToString(bundle));
-        }
-        return resultado;
-    }
-
-    private String bundleToString(Bundle bundle) {
-        if (bundle == null) {
-            return null;
-        }
-        if (bundle.getString(ColCategoria.NOMBRE.toString()) != null) {
-            return Categoria.class.getName() + ":" + bundle.getString(ColCategoria.NOMBRE.toString());
-        }
-        if (bundle.getString(ColCuenta.NOMBRE.toString()) != null) {
-            return Cuenta.class.getName() + ":" + bundle.getString(ColCuenta.NOMBRE.toString());
-        }
-        return null;
-    }
-
-    //Se carga la lista de strings en el historial de fragmentos
-    private void stringsToListaFragmentos(ArrayList<String> entrada) {
-        //Log.i(TAG, entrada.toString());
-        listaFragmentos.clear();
+    private List<Class> stringsToListaFragmentos(List<String> entrada) {
+        List<Class> salida = new ArrayList<>();
         for (String nombreFrag : entrada) {
-            listaFragmentos.add(stringToClass(nombreFrag));
+            salida.add(stringToClass(nombreFrag));
         }
+        return salida;
     }
 
     private Class stringToClass(String nombre) {
@@ -520,33 +481,38 @@ public class ActividadPrincipal extends AppCompatActivity {
         return null;
     }
 
-    //Se carga la lista de strings en el historial de bundles
-    private void stringsToListaBundles(ArrayList<String> entrada) {
-        //Log.i(TAG, entrada.toString());
-        listaBundles.clear();
-        for (String parametros : entrada) {
-            listaBundles.add(stringToBundle(parametros));
+    private List<String> listaBundlesToStrings(List<Bundle> bundles) {
+        List<String> salida = new ArrayList<>();
+        for (Bundle bundle : bundles) {
+            salida.add(bundleToString(bundle));
         }
+        return salida;
+    }
+
+    private List<Bundle> stringsToListaBundles(List<String> entrada) {
+        List<Bundle> salida = new ArrayList<>();
+        for (String parametros : entrada) {
+            salida.add(stringToBundle(parametros));
+        }
+        return salida;
+    }
+
+    private String bundleToString(Bundle bundle) {
+        if (bundle == null) {
+            return null;
+        }
+
+        Gson gson = new Gson();
+        return gson.toJson(bundle);
     }
 
     private Bundle stringToBundle(String datos) {
         if (datos == null) {
             return null;
         }
-        int posSeparador = datos.indexOf(":");
-        String tipo = datos.substring(0, posSeparador);
-        String valor = datos.substring(posSeparador + 1);
-        if (Categoria.class.getName().equals(tipo)) {
-            Bundle nuevo = new Bundle();
-            nuevo.putString(ColCategoria.NOMBRE.toString(), valor);
-            return nuevo;
-        }
-        if (Cuenta.class.getName().equals(tipo)) {
-            Bundle nuevo = new Bundle();
-            nuevo.putString(ColCuenta.NOMBRE.toString(), valor);
-            return nuevo;
-        }
-        return null;
+
+        Gson gson = new Gson();
+        return gson.fromJson(datos, Bundle.class);
     }
 
     public boolean isSesionIniciada(){

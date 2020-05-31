@@ -7,7 +7,11 @@ package cl.theroot.passbank.datos.nombres;
 public enum ColParametro {
     NOMBRE("NOMBRE"),
     VALOR("VALOR"),
-    POSICION("POSICION");
+    POSICION("POSICION"),
+    DESCRIPCION("DESCRIPCION"),
+    TIPO("TIPO"),
+    MINIMO("MINIMO"),
+    MAXIMO("MAXIMO");
 
     private final String nombre;
 

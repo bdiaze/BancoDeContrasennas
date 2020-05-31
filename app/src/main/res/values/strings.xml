@@ -103,12 +103,10 @@
 
     <!-- Acerca De -->
     <string name="acercaDe">Acerca De</string>
-    <string name="infoDesarrollo">Banco de Contraseñas 1.0\n
-        Android Jelly Bean\n
+    <string name="infoDesarrollo">Banco de Contraseñas\n
+        Android Pie\n
         \n
         2017\n
-        Benjamín Díaz\n
-        UTFSM\n
         \n
         Ícono hecho por <a href="https://www.flaticon.com/authors/pixel-perfect">Pixel Perfect</a>\n
         de <a href="https://www.flaticon.com/">www.flaticon.com</a>
@@ -125,6 +123,7 @@
     <string name="nombreParametro">Nombre Parámetro</string>
     <string name="valorParametro">Valor Parámetro</string>
     <string name="valor">Valor</string>
+    <string name="configuracionGrabada">Los cambios ejecutados fueron guardados exitosamente.</string>
 
     <!-- Menú Contextual - Generador Contraseñas -->
     <string name="caracteres">Caracteres</string>
