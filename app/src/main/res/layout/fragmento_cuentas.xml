@@ -7,28 +7,26 @@
     tools:context="cl.theroot.passbank.fragmento.FragCuentas">
 
     <TextView
-        android:text="@string/listaCuentas"
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:textSize="20sp"
-        android:textColor="@color/letra"
         android:padding="5dp"
-        android:id="@+id/textView2" />
+        android:text="@string/listaCuentas"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
 
     <EditText
         android:id="@+id/buscarEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:hint="@string/buscarCuenta"
         android:importantForAutofill="no"
         android:inputType="text"
         android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:textColor="@color/letra"
-        android:textColorHint="@color/letraAtenuada" />
+        android:paddingEnd="10dp" />
 
     <ListView
         android:layout_width="match_parent"

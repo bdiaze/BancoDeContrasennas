@@ -5,12 +5,13 @@
     android:padding="3dp">
 
     <ImageView
+        style="@style/EstiloImageOriginalWhite"
         android:id="@+id/IV_claveExpirada"
         android:layout_width="25dp"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_warning_white_24dp"
+        android:src="@drawable/baseline_warning_24"
         android:contentDescription="@string/contrCaducada"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="10dp" />
@@ -27,15 +28,14 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:maxLines="1"
-            android:textColor="@color/letra"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/TV_descripcionCuenta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            android:textColor="@color/letraAtenuada"
             android:textSize="14sp" />
     </LinearLayout>
 

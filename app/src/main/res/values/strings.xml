@@ -85,6 +85,7 @@
 
     <!-- Configuración -->
     <string name="config">Configuración</string>
+    <string name="datosInvalidos">Error, Datos Inválidos.</string>
 
     <!-- Cambio Llave Maestra -->
     <string name="cambLlaveMaestra">Cambiar Llave Maestra</string>
@@ -122,7 +123,7 @@
     <!-- Lista Configuración -->
     <string name="nombreParametro">Nombre Parámetro</string>
     <string name="valorParametro">Valor Parámetro</string>
-    <string name="valor">Valor</string>
+    <string name="valor">Ingrese un valor...</string>
     <string name="configuracionGrabada">Los cambios ejecutados fueron guardados exitosamente.</string>
 
     <!-- Menú Contextual - Generador Contraseñas -->

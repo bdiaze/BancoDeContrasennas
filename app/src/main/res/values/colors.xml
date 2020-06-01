@@ -1,14 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="white">#ffffff</color>    <!-- 255 255 255 -->
 
-    <color name="fondo">#303030</color>
-    <color name="fondoOscuro">#222222</color>
-    <color name="fondoPocoMasOscuro">#2b2b2b</color>
-    <color name="letra">#ffffff</color>
-    <color name="letraAtenuada">#9b9b9b</color>
-    <color name="boton">#5a5a5c</color>
-    <color name="transparent">#00000000</color>
+    <color name="verde01">#ddffee</color>  <!-- 221 255 238 -->
+    <color name="verde02">#b7ffd9</color>  <!-- 183 255 217 -->
+    <color name="verde03">#92ffc7</color>  <!-- 146 255 198 -->
+    <color name="verde04">#6effb2</color>  <!-- 110 255 178 -->
+    <color name="verde05">#4affa0</color>  <!-- 74 255 160 -->
+    <color name="verde06">#26ff8b</color>  <!-- 38 255 140 -->
+    <color name="verde07">#00fe81</color>  <!-- 0 254 129 -->
+
+    <color name="naranjo01">#ffebda</color>  <!-- 255 235 218 -->
+    <color name="naranjo02">#ffd6b3</color>  <!-- 255 215 179 -->
+    <color name="naranjo03">#ffc490</color>  <!-- 255 196 144 -->
+    <color name="naranjo04">#ffb36c</color>  <!-- 255 178 108 -->
+    <color name="naranjo05">#ff9f48</color>  <!-- 255 159 72 -->
+    <color name="naranjo06">#ff8b24</color>  <!-- 255 139 36 -->
+    <color name="naranjo07">#ff8000</color>  <!-- 255 127 0 -->
+
+    <color name="azul01">#dceffe</color>  <!-- 220 239 254 -->
+    <color name="azul02">#b6dfff</color>  <!-- 182 223 255 -->
+    <color name="azul03">#92ceff</color>  <!-- 146 206 255 -->
+    <color name="azul04">#6fbeff</color>  <!-- 111 190 255 -->
+    <color name="azul05">#4aaeff</color>  <!-- 74 173 255 -->
+    <color name="azul06">#289eff</color>  <!-- 40 158 255 -->
+    <color name="azul07">#0080ff</color>  <!-- 0 128 255 -->
 </resources>

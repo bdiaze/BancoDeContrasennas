@@ -1,9 +1,6 @@
 package cl.theroot.passbank;
 
-import android.app.AlertDialog;
-import android.view.View;
-
-import androidx.core.content.res.ResourcesCompat;
+import androidx.appcompat.app.AlertDialog;
 
 /**
  * Created by Benjamin on 05/10/2017.
@@ -33,10 +30,5 @@ public class ExcepcionBancoContrasennas extends Exception{
         alertDialog.setMessage(mensaje);
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", (dialog, which) -> dialog.dismiss());
         alertDialog.show();
-        int titleDividerId = fragment.getResources().getIdentifier("titleDivider", "id", "android");
-        View titleDivider = alertDialog.findViewById(titleDividerId);
-        if (titleDivider != null) {
-            titleDivider.setBackgroundColor(ResourcesCompat.getColor(fragment.getResources(), R.color.letraAtenuada, null));
-        }
     }
 }

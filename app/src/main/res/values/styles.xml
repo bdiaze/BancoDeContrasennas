@@ -1,44 +1,92 @@
 <resources>
+    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorControlNormal">@color/letra</item>
-        <item name="android:colorBackground">@color/fondoPocoMasOscuro</item>
-        <item name="android:textColorPrimary">@color/letra</item>
-        <item name="actionBarPopupTheme">@style/PopupTheme</item>
-        <item name="colorControlActivated">@color/letra</item>
-        <item name="android:alertDialogTheme">@style/Theme_Sphinx_Dialog_Alert</item>
+        <!-- Customize your theme here. -->
+        <item name="colorControlNormal">@color/naranjo05</item>
+        <item name="colorAccent">@color/naranjo06</item>
+        <item name="android:windowBackground">@color/white</item> <!-- Color fondo de la aplicación -->
+        <item name="android:itemBackground">@color/azul06</item> <!-- Color fondo de los ítems de menús-->
+
+        <item name="android:textViewStyle">@style/EstiloTextView</item>
+        <item name="editTextStyle">@style/EstiloEditText</item>
+        <item name="buttonStyle">@style/EstiloButton</item>
+        <item name="android:expandableListViewStyle">@style/EstiloListView</item>
+        <item name="android:listViewStyle">@style/EstiloListView</item>
+        <item name="imageButtonStyle">@style/EstiloImageButton</item>
+        <item name="checkboxStyle">@style/EstiloCheckBoxMenu</item>
+        <item name="seekBarStyle">@style/EstiloSeekBar</item>
+        <item name="actionBarStyle">@style/EstiloActionBar</item>
+        <item name="android:itemTextAppearance">@style/EstiloItemText</item>
+        <item name="alertDialogTheme">@style/TemaAlertDialog</item>
     </style>
 
-    <style name="PopupTheme" parent="ThemeOverlay.AppCompat.Light">
-        <item name="android:background">@color/fondoPocoMasOscuro</item>
-        <item name="android:textColor">@color/letra</item>
-        <item name="android:buttonTint">@color/letra</item>
+    <style name="EstiloTextView" parent="android:Widget.Holo.Light.TextView">
+        <item name="android:textColor">@color/azul07</item>
     </style>
 
-    <style name="Theme_Sphinx_Dialog_Alert" parent="@style/Theme_Holo_Dialog_Alert">
-        <item name="android:windowTitleStyle">@style/DialogWindowTitle.Sphinx</item>
+    <style name="EstiloTextViewAtenuado" parent="EstiloTextView">
+        <item name="android:textColor">@color/azul06</item>
     </style>
 
-    <style name="DialogWindowTitle.Sphinx" parent="@style/DialogWindowTitle_Holo">
-        <item name="android:textAppearance">@style/TextAppearance.Sphinx.DialogWindowTitle</item>
+    <style name="EstiloEditText" parent="Widget.AppCompat.EditText">
+        <item name="android:textColor">@color/azul07</item>
+        <item name="android:textColorHint">@color/azul04</item>
+        <item name="android:backgroundTint">@color/naranjo05</item>
     </style>
 
-    <style name="TextAppearance.Sphinx.DialogWindowTitle" parent="@android:style/TextAppearance.Holo.DialogWindowTitle">
-        <item name="android:textColor">@color/letra</item>
+    <style name="EstiloButton" parent="Widget.AppCompat.Button">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:backgroundTint">@color/azul07</item>
     </style>
 
-    <!-- Local copy of android:Theme.Holo.Dialog.Alert -->
-    <style name="Theme_Holo_Dialog_Alert" parent="@android:style/Theme.Holo.Dialog">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowTitleStyle">@style/DialogWindowTitle_Holo</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
-        <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
+    <style name="EstiloImageButton" parent="Widget.AppCompat.ImageButton">
+        <item name="backgroundTint">@color/azul06</item>
+        <item name="tint">@color/white</item>
     </style>
 
-    <!-- Local copy of android:DialogWindowTitle.Holo -->
-    <style name="DialogWindowTitle_Holo">
-        <item name="android:maxLines">1</item>
-        <item name="android:scrollHorizontally">true</item>
-        <item name="android:textAppearance">@android:style/TextAppearance.Holo.DialogWindowTitle</item>
+    <style name="EstiloImageOriginalWhite">
+        <item name="android:tint">@color/naranjo05</item>
+    </style>
+
+    <style name="EstiloListView" parent="android:Widget.Holo.Light.ListView">
+        <item name="android:divider">@color/azul01</item>
+        <item name="android:childDivider">@color/azul01</item>
+        <item name="android:dividerHeight">1dp</item>
+    </style>
+
+    <style name="EstiloCheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:textColor">@color/azul07</item>
+        <item name="buttonTint">@color/azul06</item>
+    </style>
+
+    <style name="EstiloSeekBar" parent="Widget.AppCompat.SeekBar">
+    </style>
+
+    <style name="EstiloActionBar" parent="Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="background">@color/azul07</item> <!-- Color fondo de la barra superior -->
+        <item name="titleTextStyle">@style/EstiloTitleText</item>
+    </style>
+
+    <style name="EstiloTitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/white</item> <!-- Color letra barra superior -->
+    </style>
+
+    <style name="EstiloItemText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/white</item> <!-- Color letra ítems menús -->
+        <item name="android:textSize">18sp</item> <!-- Tamaño letra ítems menús -->
+    </style>
+
+    <style name="EstiloCheckBoxMenu" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="buttonTint">@color/white</item>
+    </style>
+
+    <style name="TemaAlertDialog" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="buttonBarNegativeButtonStyle">@style/EstiloAlertDialogButton</item>
+        <item name="buttonBarPositiveButtonStyle">@style/EstiloAlertDialogButton</item>
+        <item name="buttonBarNeutralButtonStyle">@style/EstiloAlertDialogButton</item>
+    </style>
+
+    <style name="EstiloAlertDialogButton" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/azul07</item>
     </style>
 </resources>

@@ -6,10 +6,10 @@
     android:layout_height="match_parent">
 
     <CheckBox
+        style="@style/EstiloCheckBox"
         android:text="@string/checkbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/checkBox"
-        android:textColor="@color/letra"
-        android:buttonTint="@color/letra"/>
+        android:textSize="15sp"
+        android:id="@+id/checkBox"/>
 </LinearLayout>

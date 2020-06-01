@@ -17,19 +17,19 @@
             android:layout_gravity="center_horizontal"
             android:padding="5dp"
             android:text="@string/detCuenta"
-            android:textColor="@color/letra"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="10dp" />
 
         <TextView
+            style="@style/EstiloTextViewAtenuado"
             android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nombreCuenta"
-            android:textColor="@color/letraAtenuada"
             android:textSize="16sp" />
 
         <TextView
@@ -37,7 +37,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text=""
-            android:textColor="@color/letra"
             android:textSize="20sp" />
 
         <Space
@@ -45,11 +44,11 @@
             android:layout_height="10dp" />
 
         <TextView
+            style="@style/EstiloTextViewAtenuado"
             android:id="@+id/textView6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/descripCuenta"
-            android:textColor="@color/letraAtenuada"
             android:textSize="16sp" />
 
         <TextView
@@ -57,7 +56,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text=""
-            android:textColor="@color/letra"
             android:textSize="20sp" />
 
         <Space
@@ -65,11 +63,11 @@
             android:layout_height="10dp" />
 
         <TextView
+            style="@style/EstiloTextViewAtenuado"
             android:id="@+id/textView7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/contrCuenta"
-            android:textColor="@color/letraAtenuada"
             android:textSize="16sp" />
 
         <LinearLayout
@@ -78,15 +76,16 @@
             android:orientation="horizontal">
 
             <ImageView
+                style="@style/EstiloImageOriginalWhite"
                 android:id="@+id/IV_passVisibility"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:adjustViewBounds="true"
-                android:contentDescription="@string/mostOcultContr"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_visibility_white_24dp" />
+                android:contentDescription="@string/mostOcultContr"
+                android:src="@drawable/baseline_visibility_24" />
 
             <HorizontalScrollView
                 android:layout_width="match_parent"
@@ -106,8 +105,8 @@
                         android:layout_margin="5dp"
                         android:scrollHorizontally="true"
                         android:text=""
-                        android:textColor="@color/letra"
-                        android:textSize="20sp" />
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
@@ -116,11 +115,11 @@
         </LinearLayout>
 
         <TextView
+            style="@style/EstiloTextViewAtenuado"
             android:id="@+id/TV_clickCopiar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/clickParaCopiar"
-            android:textColor="@color/letraAtenuada"
             android:textSize="16sp"
             android:gravity="center" />
 

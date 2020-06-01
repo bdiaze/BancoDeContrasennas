@@ -16,8 +16,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="@string/introLlaveMaestra"
-            android:textColor="@color/letra"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/ET_password"
@@ -29,8 +29,6 @@
             android:hint="@string/contrasenna"
             android:importantForAutofill="no"
             android:inputType="textPassword"
-            android:textColor="@color/letra"
-            android:textColorHint="@color/letraAtenuada"
             android:textSize="16sp" />
 
         <Button
@@ -40,8 +38,6 @@
             android:layout_gravity="center"
             android:ems="10"
             android:text="@string/ingresar"
-            android:textColor="@color/letra"
-            android:backgroundTint="@color/boton"
             android:textSize="16sp" />
 
     </LinearLayout>

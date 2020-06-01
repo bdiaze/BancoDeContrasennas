@@ -1,6 +1,5 @@
 package cl.theroot.passbank.fragmento;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,8 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import androidx.core.content.res.ResourcesCompat;
 
 import cl.theroot.passbank.ActividadPrincipal;
 import cl.theroot.passbank.CustomFragment;
@@ -161,16 +158,7 @@ public class FragAgregarEditarCategoria extends CustomFragment {
                     }
                     return true;
                 } catch(ExcepcionBancoContrasennas ex) {
-                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity().getApplicationContext()).create();
-                    alertDialog.setTitle(ex.getTitulo());
-                    alertDialog.setMessage(ex.getMensaje());
-                    alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK", (dialog, which) -> dialog.dismiss());
-                    alertDialog.show();
-                    int titleDividerId = getResources().getIdentifier("titleDivider", "id", "android");
-                    View titleDivider = alertDialog.findViewById(titleDividerId);
-                    if (titleDivider != null) {
-                        titleDivider.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.letraAtenuada, null));
-                    }
+                    ex.alertDialog(this);
                     return true;
                 }
 

@@ -17,8 +17,8 @@
             android:layout_gravity="center_horizontal"
             android:padding="5dp"
             android:text="@string/agrEdtCateg"
-            android:textColor="@color/letra"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/ET_name"
@@ -29,8 +29,6 @@
             android:importantForAutofill="no"
             android:inputType="text|textCapSentences|textNoSuggestions"
             android:maxLines="1"
-            android:textColor="@color/letra"
-            android:textColorHint="@color/letraAtenuada"
             android:textSize="17sp" />
     </LinearLayout>
 </ScrollView>

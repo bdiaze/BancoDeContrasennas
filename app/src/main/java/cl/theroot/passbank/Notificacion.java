@@ -19,7 +19,7 @@ public class Notificacion {
         notificationManager.createNotificationChannel(channel);
         Notification.Builder builder = new Notification.Builder(context, tipo.getId())
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
-                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.strongbox_icon))
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_strongbox))
                 .setContentTitle(titulo)
                 .setContentText(mensaje)
                 .setStyle(new Notification.BigTextStyle().bigText(mensaje))

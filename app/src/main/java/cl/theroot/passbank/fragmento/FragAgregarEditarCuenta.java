@@ -1,6 +1,5 @@
 package cl.theroot.passbank.fragmento;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,8 +17,6 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
-import androidx.core.content.res.ResourcesCompat;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -114,12 +111,12 @@ public class FragAgregarEditarCuenta extends CustomFragment {
         IV_passVisibility.setOnClickListener(v -> {
             if (ET_password.getInputType() == 0x00000081) {
                 int pointerPos = ET_password.getSelectionStart();
-                IV_passVisibility.setImageResource(R.drawable.ic_visibility_off_white_24dp);
+                IV_passVisibility.setImageResource(R.drawable.baseline_visibility_off_24);
                 ET_password.setInputType(0x00080001);
                 ET_password.setSelection(pointerPos);
             } else {
                 int pointerPos = ET_password.getSelectionStart();
-                IV_passVisibility.setImageResource(R.drawable.ic_visibility_white_24dp);
+                IV_passVisibility.setImageResource(R.drawable.baseline_visibility_24);
                 ET_password.setInputType(0x00000081);
                 ET_password.setSelection(pointerPos);
             }
@@ -412,16 +409,7 @@ public class FragAgregarEditarCuenta extends CustomFragment {
                     return super.onOptionsItemSelected(item);
             }
         } catch(ExcepcionBancoContrasennas ex) {
-            AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-            alertDialog.setTitle(ex.getTitulo());
-            alertDialog.setMessage(ex.getMensaje());
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", (dialog, which) -> dialog.dismiss());
-            alertDialog.show();
-            int titleDividerId = getResources().getIdentifier("titleDivider", "id", "android");
-            View titleDivider = alertDialog.findViewById(titleDividerId);
-            if (titleDivider != null) {
-                titleDivider.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.letraAtenuada, null));
-            }
+            ex.alertDialog(this);
             return true;
         }
     }

@@ -7,14 +7,14 @@
     tools:context="cl.theroot.passbank.fragmento.FragCategorias">
 
     <TextView
-        android:text="@string/listCateg"
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:textSize="20sp"
-        android:textColor="@color/letra"
         android:padding="5dp"
-        android:id="@+id/textView2" />
+        android:text="@string/listCateg"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <ListView
         android:layout_width="match_parent"

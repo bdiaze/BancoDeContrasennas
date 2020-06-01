@@ -6,28 +6,27 @@
     tools:context="cl.theroot.passbank.fragmento.FragDetalleCategoria">
 
     <TextView
-        android:text="@string/detCategoria"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:padding="5dp"
+        android:text="@string/detCategoria"
         android:textSize="20sp"
-        android:textColor="@color/letra"
-        android:padding="5dp"/>
+        android:textStyle="bold" />
 
     <TextView
+        style="@style/EstiloTextViewAtenuado"
         android:text="@string/nombreCateg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textColor="@color/letraAtenuada"/>
+        android:textSize="16sp"/>
 
     <TextView
         android:text=""
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/TV_name"
-        android:textSize="20sp"
-        android:textColor="@color/letra"/>
+        android:textSize="20sp"/>
 
     <Space
         android:layout_width="match_parent"
@@ -40,8 +39,8 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/cuentasAsoc"
-        android:textColor="@color/letraAtenuada"
-        android:textSize="16sp" />
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <ListView
         android:layout_width="match_parent"

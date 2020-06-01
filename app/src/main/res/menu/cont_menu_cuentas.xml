@@ -3,11 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/cont_menu_accounts_edit"
-        android:icon="@drawable/ic_build_white_24dp"
+        android:icon="@drawable/baseline_build_24"
         android:title="@string/editar" />
 
     <item
         android:id="@+id/cont_menu_accounts_delete"
-        android:icon="@drawable/ic_delete_white_24dp"
+        android:icon="@drawable/baseline_delete_24"
         android:title="@string/eliminar" />
 </menu>

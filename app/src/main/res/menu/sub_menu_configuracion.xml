@@ -4,25 +4,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_showMenu"
-        android:icon="@drawable/ic_arrow_drop_down_white_24dp"
+        android:icon="@drawable/baseline_arrow_drop_down_24"
         android:title="@string/submenu"
         app:showAsAction="always"
         android:orderInCategory="99">
         <menu>
             <item
                 android:id="@+id/sub_menu_configuration_change_master_key"
-                android:icon="@drawable/ic_edit_white_24dp"
+                android:icon="@drawable/baseline_edit_24"
                 android:title="@string/cambiarLlave"
                 app:showAsAction="never"/>
             <item
                 android:id="@+id/sub_menu_configuration_export_database"
-                android:icon="@drawable/ic_cloud_upload_white_24dp"
+                android:icon="@drawable/baseline_cloud_upload_24"
                 android:title="@string/respaldar"
                 app:showAsAction="never"/>
 
             <item
                 android:id="@+id/sub_menu_configuration_save"
-                android:icon="@drawable/ic_save_white_24dp"
+                android:icon="@drawable/baseline_save_24"
                 android:title="@string/guardar"
                 app:showAsAction="never"/>
         </menu>

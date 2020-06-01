@@ -15,7 +15,6 @@
         android:paddingStart="2sp"
         android:paddingEnd="2sp"
         android:text="@string/nombreParametro"
-        android:textColor="@color/letra"
         android:textSize="15sp" />
 
     <EditText
@@ -28,8 +27,7 @@
         android:importantForAutofill="no"
         android:inputType="text|textNoSuggestions"
         android:text="@string/valorParametro"
-        android:textColor="@color/letra"
-        android:textColorHint="@color/letraAtenuada"
-        android:textSize="15sp" />
+        android:textSize="17sp"
+        android:textStyle="bold" />
 
 </LinearLayout>

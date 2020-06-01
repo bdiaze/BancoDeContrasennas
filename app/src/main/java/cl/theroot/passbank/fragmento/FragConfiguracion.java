@@ -1,7 +1,5 @@
 package cl.theroot.passbank.fragmento;
 
-
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,14 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import androidx.core.content.res.ResourcesCompat;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import cl.theroot.passbank.ActividadPrincipal;
 import cl.theroot.passbank.CustomFragment;
 import cl.theroot.passbank.CustomToast;
+import cl.theroot.passbank.ExcepcionBancoContrasennas;
 import cl.theroot.passbank.R;
 import cl.theroot.passbank.adaptador.AdapParametros;
 import cl.theroot.passbank.datos.CategoriaDAO;
@@ -75,9 +72,13 @@ public class FragConfiguracion extends CustomFragment {
             case R.id.sub_menu_configuration_export_database:
                 return ((ActividadPrincipal) getActivity()).cambiarFragmento(new FragExportar());
             case R.id.sub_menu_configuration_save:
-                List<ParametroSeleccionable> parametros = adapter.getParametros();
-                String salida = parametrosValidos(parametros);
-                if (salida == null) {
+                try {
+                    List<ParametroSeleccionable> parametros = adapter.getParametros();
+                    String salida = parametrosValidos(parametros);
+                    if (salida != null) {
+                        throw new ExcepcionBancoContrasennas(getResources().getString(R.string.datosInvalidos), salida);
+                    }
+
                     for (Parametro parametro : parametros) {
                         parametroDAO.actualizarUna(parametro);
                     }
@@ -88,18 +89,10 @@ public class FragConfiguracion extends CustomFragment {
                         parametros.add(new ParametroSeleccionable(parametro.getNombre(), parametro.getValor(), parametro.getPosicion(), parametro.getDescripcion(), parametro.getTipo(), parametro.getMinimo(), parametro.getMaximo(), false));
                     }
                     adapter.updateParametros(parametros);
+
                     return true;
-                } else {
-                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-                    alertDialog.setTitle("Error, Datos Inválidos");
-                    alertDialog.setMessage(salida);
-                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", (dialog, which) -> dialog.dismiss());
-                    alertDialog.show();
-                    int titleDividerId = getResources().getIdentifier("titleDivider", "id", "android");
-                    View titleDivider = alertDialog.findViewById(titleDividerId);
-                    if (titleDivider != null) {
-                        titleDivider.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.letraAtenuada, null));
-                    }
+                } catch (ExcepcionBancoContrasennas ex) {
+                    ex.alertDialog(this);
                 }
                 return super.onOptionsItemSelected(item);
             default:

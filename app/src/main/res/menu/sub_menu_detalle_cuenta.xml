@@ -4,29 +4,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_showMenu"
-        android:icon="@drawable/ic_arrow_drop_down_white_24dp"
+        android:icon="@drawable/baseline_arrow_drop_down_24"
         android:title="@string/submenu"
         app:showAsAction="always"
         android:orderInCategory="99">
         <menu>
             <item
                 android:id="@+id/sub_menu_show_account_back"
-                android:icon="@drawable/ic_arrow_back_white_24dp"
+                android:icon="@drawable/baseline_arrow_back_24"
                 android:title="@string/volver"
                 app:showAsAction="never"/>
             <item
                 android:id="@+id/sub_menu_show_account_edit"
-                android:icon="@drawable/ic_build_white_24dp"
+                android:icon="@drawable/baseline_build_24"
                 android:title="@string/editar"
                 app:showAsAction="never"/>
             <item
                 android:id="@+id/sub_menu_show_account_delete"
-                android:icon="@drawable/ic_delete_white_24dp"
+                android:icon="@drawable/baseline_delete_24"
                 android:title="@string/eliminar"
                 app:showAsAction="never"/>
             <item
                 android:id="@+id/sub_menu_show_account_record"
-                android:icon="@drawable/ic_history_white_24dp"
+                android:icon="@drawable/baseline_history_24"
                 android:title="@string/historial"
                 app:showAsAction="never"/>
         </menu>

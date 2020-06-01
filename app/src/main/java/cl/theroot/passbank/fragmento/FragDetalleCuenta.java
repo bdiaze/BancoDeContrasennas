@@ -2,7 +2,6 @@ package cl.theroot.passbank.fragmento;
 
 
 import android.app.AlarmManager;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -20,7 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.core.content.res.ResourcesCompat;
+import androidx.appcompat.app.AlertDialog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -180,11 +179,6 @@ public class FragDetalleCuenta extends CustomFragment {
                         dialog.dismiss();
                     });
                     alertDialog.show();
-                    int titleDividerId = getResources().getIdentifier("titleDivider", "id", "android");
-                    View titleDivider = alertDialog.findViewById(titleDividerId);
-                    if (titleDivider != null) {
-                        titleDivider.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.letraAtenuada, null));
-                    }
                 }
                 return true;
 
@@ -204,11 +198,11 @@ public class FragDetalleCuenta extends CustomFragment {
 
     private void cambiarVisualizacion(boolean mostrarContrasenna) {
         if (mostrarContrasenna) {
-            IV_passVisibility.setImageResource(R.drawable.ic_visibility_off_white_24dp);
+            IV_passVisibility.setImageResource(R.drawable.baseline_visibility_off_24);
             TV_password.setInputType(0x00080001);
             TV_clickCopiar.setVisibility(View.VISIBLE);
         } else {
-            IV_passVisibility.setImageResource(R.drawable.ic_visibility_white_24dp);
+            IV_passVisibility.setImageResource(R.drawable.baseline_visibility_24);
             TV_password.setInputType(0x00000081);
             TV_clickCopiar.setVisibility(View.INVISIBLE);
         }

@@ -5,23 +5,23 @@
 
     <item
         android:id="@+id/menu_showMenu"
-        android:icon="@drawable/ic_arrow_drop_down_white_24dp"
+        android:icon="@drawable/baseline_arrow_drop_down_24"
         android:title="@string/submenu"
         app:showAsAction="always"
         android:orderInCategory="99">
         <menu>
             <item
                 android:id="@+id/sub_menu_categorias_agregar"
-                android:icon="@drawable/ic_create_new_folder_white_24dp"
+                android:icon="@drawable/baseline_create_new_folder_24"
                 android:title="@string/agrCategoria"
                 app:showAsAction="never"/>
 
             <item
                 android:id="@+id/sub_menu_categorias_habilitar_orden"
-                android:icon="@drawable/ic_sort_white_24dp"
+                android:icon="@drawable/baseline_sort_24"
                 android:title="@string/habOrden"
                 app:showAsAction="never"
-                android:checkable="true"/>
+                android:checkable="true" />
         </menu>
     </item>
 </menu>

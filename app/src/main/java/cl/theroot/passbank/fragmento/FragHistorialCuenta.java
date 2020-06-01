@@ -1,6 +1,5 @@
 package cl.theroot.passbank.fragmento;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.core.content.res.ResourcesCompat;
+import androidx.appcompat.app.AlertDialog;
 
 import java.util.List;
 
@@ -110,11 +109,6 @@ public class FragHistorialCuenta extends CustomFragment {
                     dialog.dismiss();
                 });
                 alertDialog.show();
-                int titleDividerId = getResources().getIdentifier("titleDivider", "id", "android");
-                View titleDivider = alertDialog.findViewById(titleDividerId);
-                if (titleDivider != null) {
-                    titleDivider.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.letraAtenuada, null));
-                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

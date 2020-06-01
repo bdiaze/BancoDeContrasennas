@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/sub_menu_accounts_add"
-        android:icon="@drawable/ic_person_add_white_24dp"
+        android:icon="@drawable/baseline_person_add_24"
         android:title="@string/agrCuenta"
         app:showAsAction="ifRoom"
         android:orderInCategory="99"/>

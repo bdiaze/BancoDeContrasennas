@@ -3,29 +3,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_showMenu"
-        android:icon="@drawable/ic_arrow_drop_down_white_24dp"
+        android:icon="@drawable/baseline_arrow_drop_down_24"
         android:title="@string/submenu"
         app:showAsAction="always"
         android:orderInCategory="99">
         <menu>
             <item
                 android:id="@+id/sub_menu_detalle_categoria_volver"
-                android:icon="@drawable/ic_arrow_back_white_24dp"
+                android:icon="@drawable/baseline_arrow_back_24"
                 android:title="@string/volver"
                 app:showAsAction="never"/>
             <item
                 android:id="@+id/sub_menu_detalle_categoria_editar"
-                android:icon="@drawable/ic_build_white_24dp"
+                android:icon="@drawable/baseline_build_24"
                 android:title="@string/editar"
                 app:showAsAction="never"/>
             <item
                 android:id="@+id/sub_menu_detalle_categoria_eliminar"
-                android:icon="@drawable/ic_delete_white_24dp"
+                android:icon="@drawable/baseline_delete_24"
                 android:title="@string/eliminar"
                 app:showAsAction="never"/>
             <item
                 android:id="@+id/sub_menu_detalle_categoria_habilitar_orden"
-                android:icon="@drawable/ic_sort_white_24dp"
+                android:icon="@drawable/baseline_sort_24"
                 android:title="@string/habOrden"
                 app:showAsAction="never"
                 android:checkable="true"/>

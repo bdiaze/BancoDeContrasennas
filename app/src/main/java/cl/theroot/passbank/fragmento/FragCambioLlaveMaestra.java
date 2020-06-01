@@ -1,7 +1,5 @@
 package cl.theroot.passbank.fragmento;
 
-import android.app.AlertDialog;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,8 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-
-import androidx.core.content.res.ResourcesCompat;
 
 import cl.theroot.passbank.ActividadPrincipal;
 import cl.theroot.passbank.Cifrador;
@@ -27,9 +23,6 @@ import cl.theroot.passbank.datos.nombres.NombreParametro;
 import cl.theroot.passbank.dominio.Contrasenna;
 import cl.theroot.passbank.dominio.Parametro;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class FragCambioLlaveMaestra extends CustomFragment {
     //private static final String TAG = "BdC-FragCambioLlaveMaestra";
     private EditText ET_oldPassword;
@@ -171,16 +164,7 @@ public class FragCambioLlaveMaestra extends CustomFragment {
                         }
                     }
                 } catch(ExcepcionBancoContrasennas ex) {
-                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-                    alertDialog.setTitle(ex.getTitulo());
-                    alertDialog.setMessage(ex.getMensaje());
-                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", (dialog, which) -> dialog.dismiss());
-                    alertDialog.show();
-                    int titleDividerId = getResources().getIdentifier("titleDivider", "id", "android");
-                    View titleDivider = alertDialog.findViewById(titleDividerId);
-                    if (titleDivider != null) {
-                        titleDivider.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.letraAtenuada, null));
-                    }
+                    ex.alertDialog(this);
                 }
                 return true;
             default:

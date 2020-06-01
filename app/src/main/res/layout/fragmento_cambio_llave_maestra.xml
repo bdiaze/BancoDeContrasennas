@@ -16,8 +16,8 @@
             android:gravity="center"
             android:padding="5dp"
             android:text="@string/cambLlaveMaestra"
-            android:textColor="@color/letra"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textView4"
@@ -26,7 +26,6 @@
             android:layout_marginTop="10dp"
             android:gravity="center"
             android:text="@string/introLlaveActual"
-            android:textColor="@color/letra"
             android:textSize="16sp" />
 
         <EditText
@@ -39,8 +38,6 @@
             android:hint="@string/llaveActual"
             android:importantForAutofill="no"
             android:inputType="textPassword"
-            android:textColor="@color/letra"
-            android:textColorHint="@color/letraAtenuada"
             android:textSize="14sp" />
 
         <TextView
@@ -50,7 +47,6 @@
             android:layout_marginTop="20dp"
             android:gravity="center"
             android:text="@string/introLlaveCamb"
-            android:textColor="@color/letra"
             android:textSize="16sp" />
 
         <EditText
@@ -63,8 +59,6 @@
             android:hint="@string/llaveCambiada"
             android:importantForAutofill="no"
             android:inputType="textPassword"
-            android:textColor="@color/letra"
-            android:textColorHint="@color/letraAtenuada"
             android:textSize="14sp" />
 
         <TextView
@@ -74,7 +68,6 @@
             android:layout_marginTop="10dp"
             android:gravity="center"
             android:text="@string/reintroLlaveCamb"
-            android:textColor="@color/letra"
             android:textSize="16sp" />
 
         <EditText
@@ -87,8 +80,6 @@
             android:hint="@string/llaveCambiada"
             android:importantForAutofill="no"
             android:inputType="textPassword"
-            android:textColor="@color/letra"
-            android:textColorHint="@color/letraAtenuada"
             android:textSize="14sp" />
 
     </LinearLayout>

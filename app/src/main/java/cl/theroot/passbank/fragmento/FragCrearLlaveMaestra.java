@@ -1,7 +1,5 @@
 package cl.theroot.passbank.fragmento;
 
-import android.app.AlertDialog;
-import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -52,10 +50,6 @@ import cl.theroot.passbank.dominio.Parametro;
 
 import static android.app.Activity.RESULT_OK;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
 public class FragCrearLlaveMaestra extends CustomFragment implements View.OnClickListener {
     private static final String TAG = "BdC-FragCrearLlaveMa...";
     private static final int REQUEST_CODE_SIGN_IN = 1;
@@ -304,11 +298,7 @@ public class FragCrearLlaveMaestra extends CustomFragment implements View.OnClic
             }
         } catch (ExcepcionBancoContrasennas ex) {
             Log.i(TAG, String.format("CrearLlaveMaestra.onClick(...) - Error al crear llave maestra. Mensaje: %s", ex.getMensaje()));
-            AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-            alertDialog.setTitle(ex.getTitulo());
-            alertDialog.setMessage(ex.getMensaje());
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", (dialog, which) -> dialog.dismiss());
-            alertDialog.show();
+            ex.alertDialog(this);
         }
     }
 

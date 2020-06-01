@@ -1,6 +1,5 @@
 package cl.theroot.passbank;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -86,6 +86,7 @@ public class ActividadPrincipal extends AppCompatActivity {
             Class clase = stringToClass(savedInstanceState.getString(ultimoFragmento));
             Bundle bundle = stringToBundle(savedInstanceState.getString(ultimoBundle));
             try {
+                Log.i(TAG, "onCreate(...) - Se recrea el fragmento que se estaba mostrando anteriormente.");
                 CustomFragment fragmento = (CustomFragment) clase.getConstructor().newInstance();
                 fragmento.setArguments(bundle);
                 fragmentoActual = fragmento;
@@ -135,6 +136,7 @@ public class ActividadPrincipal extends AppCompatActivity {
 
     @Override
     public void onStart() {
+        super.onStart();
         if (onStop != null) {
             // Se obtiene el tiempo transcurrido desde que no se visualiza la ventana...
             long tiempoActual = Calendar.getInstance().getTimeInMillis();
@@ -163,7 +165,6 @@ public class ActividadPrincipal extends AppCompatActivity {
 
             onStop = null;
         }
-        super.onStart();
     }
 
     @Override
