@@ -91,10 +91,10 @@ public class FragAgregarEditarCuenta extends CustomFragment implements AlertDial
 
     private String oldName;
     private Long oldPasswordID;
-    private byte modoGenerador = 0;
+    private Byte modoGenerador = 0;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             oldName = savedInstanceState.getString(KEY_STR_NOM_ANT);
             oldPasswordID = savedInstanceState.getLong(KEY_LNG_CNT_IDN);
@@ -285,9 +285,9 @@ public class FragAgregarEditarCuenta extends CustomFragment implements AlertDial
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putString(KEY_STR_NOM_ANT, oldName);
-        outState.putLong(KEY_LNG_CNT_IDN, oldPasswordID);
-        outState.putByte(KEY_BYT_MOD_GEN, modoGenerador);
+        if (oldName != null) outState.putString(KEY_STR_NOM_ANT, oldName);
+        if (oldPasswordID != null) outState.putLong(KEY_LNG_CNT_IDN, oldPasswordID);
+        if (modoGenerador != null) outState.putByte(KEY_BYT_MOD_GEN, modoGenerador);
         super.onSaveInstanceState(outState);
     }
 

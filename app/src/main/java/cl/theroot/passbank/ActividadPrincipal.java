@@ -133,8 +133,10 @@ public class ActividadPrincipal extends AppCompatActivity implements AlertDialog
         savedInstanceState.putStringArrayList(KEY_SAL_HIS_ARG, new ArrayList<>(listaBundlesToStrings(listaBundles)));
 
         //Almacenar el fragmento actual
-        savedInstanceState.putString(KEY_STR_ULT_FRG, fragmentoActual.getClass().getName());
-        savedInstanceState.putString(KEY_STR_ULT_ARG, bundleToString(fragmentoActual.getArguments()));
+        if (fragmentoActual != null) {
+            savedInstanceState.putString(KEY_STR_ULT_FRG, fragmentoActual.getClass().getName());
+            savedInstanceState.putString(KEY_STR_ULT_ARG, bundleToString(fragmentoActual.getArguments()));
+        }
 
         Log.i(TAG, "onSaveInstanceState(...) - Se termina etapa onSaveInstanceState.");
         super.onSaveInstanceState(savedInstanceState);

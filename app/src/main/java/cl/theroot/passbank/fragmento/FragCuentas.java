@@ -182,7 +182,7 @@ public class FragCuentas extends CustomFragment implements AlertDialogContMenuEd
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putString(KEY_STR_NOM_CUE, nombreCuenta);
+        if (nombreCuenta != null) outState.putString(KEY_STR_NOM_CUE, nombreCuenta);
         super.onSaveInstanceState(outState);
     }
 
@@ -256,12 +256,12 @@ public class FragCuentas extends CustomFragment implements AlertDialogContMenuEd
     private List<CuentaConFecha> buscarCuentas(String busqueda) {
         List<CuentaConFecha> salida = new ArrayList<>();
 
-        if (busqueda.trim().length() > 0) {
-            // Se graba última búsqueda generada...
-            if (this.getArguments() == null) { this.setArguments(new Bundle()); }
-            this.getArguments().remove(ColCuenta.NOMBRE.toString());
-            this.getArguments().putString(ColCuenta.NOMBRE.toString(), busqueda.trim());
+        // Se graba última búsqueda generada...
+        if (this.getArguments() == null) { this.setArguments(new Bundle()); }
+        this.getArguments().remove(ColCuenta.NOMBRE.toString());
+        this.getArguments().putString(ColCuenta.NOMBRE.toString(), busqueda.trim());
 
+        if (busqueda.trim().length() > 0) {
             for (Cuenta cuenta : cuentaDAO.buscarCuentas(busqueda)) {
                 Contrasenna contrasenna = contrasennaDAO.seleccionarUltimaPorCuenta(cuenta.getNombre());
                 String fecha = "2000/01/01";

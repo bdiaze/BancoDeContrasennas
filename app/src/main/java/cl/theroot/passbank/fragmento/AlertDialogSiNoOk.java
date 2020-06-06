@@ -50,10 +50,10 @@ public class AlertDialogSiNoOk extends AppCompatDialogFragment {
     private static final String KEY_STR_MNJ = "KEY_STR_MNJ";
     private static final String KEY_BLN_QTR = "KEY_BLN_QTR";
 
-    private int tipo = TIPO_OK;
+    private Integer tipo = TIPO_OK;
     private String titulo;
     private String mensaje;
-    private boolean quitarDialog = true;
+    private Boolean quitarDialog = true;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -124,10 +124,10 @@ public class AlertDialogSiNoOk extends AppCompatDialogFragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putInt(KEY_INT_TIP, tipo);
-        outState.putString(KEY_STR_TIT, titulo);
-        outState.putString(KEY_STR_MNJ, mensaje);
-        outState.putBoolean(KEY_BLN_QTR, quitarDialog);
+        if (tipo != null) outState.putInt(KEY_INT_TIP, tipo);
+        if (titulo != null) outState.putString(KEY_STR_TIT, titulo);
+        if (mensaje != null) outState.putString(KEY_STR_MNJ, mensaje);
+        if (quitarDialog != null) outState.putBoolean(KEY_BLN_QTR, quitarDialog);
         super.onSaveInstanceState(outState);
     }
 

@@ -67,7 +67,7 @@ public class FragHistorialCuenta extends CustomFragment implements AlertDialogSi
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putString(KEY_STR_CNT_NOM, accountName);
+        if (accountName != null) outState.putString(KEY_STR_CNT_NOM, accountName);
         super.onSaveInstanceState(outState);
     }
 

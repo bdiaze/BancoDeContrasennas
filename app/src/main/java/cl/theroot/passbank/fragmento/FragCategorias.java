@@ -34,16 +34,16 @@ public class FragCategorias extends CustomFragment implements AlertDialogContMen
     ListView listView;
 
     private static final String KEY_STR_SEL_CAT = "KEY_STR_SEL_CAT";
-    private static final String KEY_STR_FLE_VIS = "KEY_STR_FLE_VIS";
+    private static final String KEY_BLN_FLE_VIS = "KEY_STR_FLE_VIS";
 
     private String selectedCategory;
+    private Boolean ocultarFlechas = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        boolean ocultarFlechas = true;
         if (savedInstanceState != null) {
             selectedCategory = savedInstanceState.getString(KEY_STR_SEL_CAT);
-            ocultarFlechas = savedInstanceState.getBoolean(KEY_STR_FLE_VIS);
+            ocultarFlechas = savedInstanceState.getBoolean(KEY_BLN_FLE_VIS);
         }
 
         setHasOptionsMenu(true);
@@ -87,8 +87,8 @@ public class FragCategorias extends CustomFragment implements AlertDialogContMen
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putString(KEY_STR_SEL_CAT, selectedCategory);
-        outState.putBoolean(KEY_STR_FLE_VIS, adapter.getOcultarFlechas());
+        if (selectedCategory != null) outState.putString(KEY_STR_SEL_CAT, selectedCategory);
+        if (ocultarFlechas != null) outState.putBoolean(KEY_BLN_FLE_VIS, ocultarFlechas);
         super.onSaveInstanceState(outState);
     }
 
@@ -96,6 +96,10 @@ public class FragCategorias extends CustomFragment implements AlertDialogContMen
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.sub_menu_categorias, menu);
+        if (ocultarFlechas != null) {
+            MenuItem item = menu.findItem(R.id.sub_menu_categorias_habilitar_orden);
+            item.setChecked(!ocultarFlechas);
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -109,9 +113,11 @@ public class FragCategorias extends CustomFragment implements AlertDialogContMen
                 if (item.isChecked()) {
                     listView.setOnItemClickListener(null);
                     adapter.setOcultarFlechas(false);
+                    ocultarFlechas = false;
                 } else {
                     listView.setOnItemClickListener(mOnItemClickListener);
                     adapter.setOcultarFlechas(true);
+                    ocultarFlechas = true;
                 }
                 return true;
             default:

@@ -74,7 +74,7 @@ public class FragAgregarEditarCategoria extends CustomFragment implements AlertD
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putString(KEY_STR_NOM_ANT, oldName);
+        if (oldName != null) outState.putString(KEY_STR_NOM_ANT, oldName);
         super.onSaveInstanceState(outState);
     }
 

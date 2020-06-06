@@ -42,14 +42,17 @@ public class FragDetalleCategoria extends CustomFragment implements AlertDialogS
     @BindView(R.id.LV_cuentas)
     ListView listView;
 
-    private  static final String KEY_STR_NOM_CAT = "KEY_STR_NOM_CAT";
+    private static final String KEY_STR_NOM_CAT = "KEY_STR_NOM_CAT";
+    private static final String KEY_BLN_FLE_VIS = "KEY_STR_FLE_VIS";
 
     private String nombreCategoria;
+    private Boolean ocultarFlechas = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             nombreCategoria = savedInstanceState.getString(KEY_STR_NOM_CAT);
+            ocultarFlechas = savedInstanceState.getBoolean(KEY_BLN_FLE_VIS);
         }
 
         setHasOptionsMenu(true);
@@ -77,6 +80,7 @@ public class FragDetalleCategoria extends CustomFragment implements AlertDialogS
 
         adaptador = new AdapCuentas(getContext(), cuentas, nombreCategoria);
         listView.setAdapter(adaptador);
+        adaptador.setOcultarFlechas(ocultarFlechas);
         listView.setSelector(android.R.color.transparent);
 
         if (cuentas.isEmpty()) {
@@ -88,13 +92,18 @@ public class FragDetalleCategoria extends CustomFragment implements AlertDialogS
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putString(KEY_STR_NOM_CAT, nombreCategoria);
+        if (nombreCategoria != null) outState.putString(KEY_STR_NOM_CAT, nombreCategoria);
+        if (ocultarFlechas != null) outState.putBoolean(KEY_BLN_FLE_VIS, ocultarFlechas);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.sub_menu_detalle_categoria, menu);
+        if (ocultarFlechas != null) {
+            MenuItem item = menu.findItem(R.id.sub_menu_detalle_categoria_habilitar_orden);
+            item.setChecked(!ocultarFlechas);
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -122,8 +131,10 @@ public class FragDetalleCategoria extends CustomFragment implements AlertDialogS
                 item.setChecked(!item.isChecked());
                 if (item.isChecked()) {
                     adaptador.setOcultarFlechas(false);
+                    ocultarFlechas = false;
                 } else {
                     adaptador.setOcultarFlechas(true);
+                    ocultarFlechas = true;
                 }
                 return true;
             default:

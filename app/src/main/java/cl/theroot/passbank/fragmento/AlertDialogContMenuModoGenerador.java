@@ -31,7 +31,7 @@ public class AlertDialogContMenuModoGenerador extends AppCompatDialogFragment {
 
     private static final String KEY_INT_SEL = "KEY_INT_SEL";
 
-    private int seleccion;
+    private Integer seleccion;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -66,7 +66,7 @@ public class AlertDialogContMenuModoGenerador extends AppCompatDialogFragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putInt(KEY_INT_SEL, seleccion);
+        if (seleccion != null) outState.putInt(KEY_INT_SEL, seleccion);
         super.onSaveInstanceState(outState);
     }
 
