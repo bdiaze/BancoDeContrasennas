@@ -12,7 +12,8 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
-import cl.theroot.passbank.ActividadPrincipal;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cl.theroot.passbank.CustomFragment;
 import cl.theroot.passbank.CustomToast;
 import cl.theroot.passbank.ExcepcionBancoContrasennas;
@@ -25,22 +26,24 @@ import cl.theroot.passbank.dominio.Parametro;
 import cl.theroot.passbank.dominio.ParametroSeleccionable;
 
 
-public class FragConfiguracion extends CustomFragment {
+public class FragConfiguracion extends CustomFragment implements AlertDialogSiNoOk.iProcesarBotonSiNoOk {
     private static final String TAG = "BdC-FragConfiguracion";
-    private AdapParametros adapter;
 
+    private AdapParametros adapter;
     private CategoriaDAO categoriaDAO;
     private ParametroDAO parametroDAO;
+
+    @BindView(R.id.listConfiguration)
+    ListView listView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        parametroDAO = new ParametroDAO(getActivity().getApplicationContext());
-        categoriaDAO = new CategoriaDAO(getActivity().getApplicationContext());
-
         View view = inflater.inflate(R.layout.fragmento_configuracion, container, false);
+        ButterKnife.bind(this, view);
 
-        ListView listView = view.findViewById(R.id.listConfiguration);
+        parametroDAO = new ParametroDAO(getApplicationContext());
+        categoriaDAO = new CategoriaDAO(getApplicationContext());
 
         List<ParametroSeleccionable> parametros = new ArrayList<>();
         for (Parametro parametro : parametroDAO.seleccionarVisibles()) {
@@ -68,9 +71,9 @@ public class FragConfiguracion extends CustomFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.sub_menu_configuration_change_master_key:
-                return ((ActividadPrincipal) getActivity()).cambiarFragmento(new FragCambioLlaveMaestra());
+                return actividadPrincipal().cambiarFragmento(new FragCambioLlaveMaestra());
             case R.id.sub_menu_configuration_export_database:
-                return ((ActividadPrincipal) getActivity()).cambiarFragmento(new FragExportar());
+                return actividadPrincipal().cambiarFragmento(new FragRespaldar());
             case R.id.sub_menu_configuration_save:
                 try {
                     List<ParametroSeleccionable> parametros = adapter.getParametros();
@@ -149,5 +152,10 @@ public class FragConfiguracion extends CustomFragment {
             }
         }
         return null;
+    }
+
+    @Override
+    public void procesarBotonSiNoOk(int boton) {
+
     }
 }

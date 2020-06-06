@@ -10,11 +10,12 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.NonNull;
 
 import java.util.List;
 
-import cl.theroot.passbank.ActividadPrincipal;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cl.theroot.passbank.CustomFragment;
 import cl.theroot.passbank.CustomToast;
 import cl.theroot.passbank.R;
@@ -23,44 +24,51 @@ import cl.theroot.passbank.datos.ContrasennaDAO;
 import cl.theroot.passbank.datos.nombres.ColCuenta;
 import cl.theroot.passbank.dominio.Contrasenna;
 
-public class FragHistorialCuenta extends CustomFragment {
+public class FragHistorialCuenta extends CustomFragment implements AlertDialogSiNoOk.iProcesarBotonSiNoOk {
+    private static final String TAG = "BdC-FragHistorialCuenta";
+
+    private ContrasennaDAO contrasennaDAO;
     private AdapContrasennas adapter;
 
-    private List<Contrasenna> listItems;
+    @BindView(R.id.TV_titule)
+    TextView TV_titule;
+    @BindView(R.id.listView)
+    ListView listView;
+
+    private static final String KEY_STR_CNT_NOM = "KEY_STR_CNT_NOM";
 
     private String accountName;
-    private ContrasennaDAO contrasennaDAO;
-
-    public FragHistorialCuenta() {
-
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            accountName = savedInstanceState.getString(KEY_STR_CNT_NOM);
+        }
+
         setHasOptionsMenu(true);
-        contrasennaDAO = new ContrasennaDAO(getActivity().getApplicationContext());
-
         View view = inflater.inflate(R.layout.fragmento_historial_cuenta, container, false);
-        TextView TV_titule = view.findViewById(R.id.TV_titule);
-        ListView listView = view.findViewById(R.id.listView);
+        ButterKnife.bind(this, view);
 
-        accountName = null;
+        contrasennaDAO = new ContrasennaDAO(getApplicationContext());
+
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             accountName = bundle.getString(ColCuenta.NOMBRE.toString());
-            TV_titule.setText(getResources().getString(R.string.histDe, accountName));
         }
 
-        listItems = contrasennaDAO.seleccionarPorCuenta(accountName);
+        TV_titule.setText(getResources().getString(R.string.histDe, accountName));
 
-        adapter = new AdapContrasennas(this, getActivity(), listItems);
+        List<Contrasenna> contrasennas = contrasennaDAO.seleccionarPorCuenta(accountName);
+        adapter = new AdapContrasennas(this, getContext(), contrasennas);
         listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener((adapterView, view1, i, l) -> {
-
-        });
-        getActivity().invalidateOptionsMenu();
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString(KEY_STR_CNT_NOM, accountName);
+        super.onSaveInstanceState(outState);
     }
 
     //Creación del submenu del fragmento
@@ -70,48 +78,37 @@ public class FragHistorialCuenta extends CustomFragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    @Override
-    public void onPrepareOptionsMenu(Menu menu){
-        if (adapter != null) {
-            if (adapter.getCount() > 1) {
-                menu.findItem(R.id.sub_menu_history_account_clear).setEnabled(true);
-            } else {
-                menu.findItem(R.id.sub_menu_history_account_clear).setEnabled(false);
-            }
-        }
-        super.onPrepareOptionsMenu(menu);
-    }
-
     //Creación de la funcionalidad del submenu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (!((ActividadPrincipal) getActivity()).isSesionIniciada()) {
-            return false;
-        }
         switch (item.getItemId()) {
             case R.id.sub_menu_history_account_back:
                 getActivity().onBackPressed();
                 return true;
 
             case R.id.sub_menu_history_account_clear:
-                AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-                alertDialog.setTitle("Eliminación del Historial de Cuenta");
-                alertDialog.setMessage("¿Está seguro que desea eliminar el historial de la cuenta " + accountName + "? Todas las contraseñas, excepto la última, serán removidas permanentemente.");
-                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO", (dialog, which) -> dialog.dismiss());
-                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "SÍ", (dialog, which) -> {
-                    if (contrasennaDAO.eliminarNoUltimasPorCuenta(accountName) > 0) {
-                        listItems = contrasennaDAO.seleccionarPorCuenta(accountName);
-                        adapter.updatePasswordsList(listItems);
-                        CustomToast.Build(getActivity().getApplicationContext(), "Su historial de contraseñas fue limpiado exitosamente.");
-
-                    }
-                    getActivity().invalidateOptionsMenu();
-                    dialog.dismiss();
-                });
-                alertDialog.show();
+                AlertDialogSiNoOk alertDialogSiNoOk = new AlertDialogSiNoOk();
+                alertDialogSiNoOk.setTipo(AlertDialogSiNoOk.TIPO_SI_NO);
+                alertDialogSiNoOk.setTitulo(getString(R.string.elimHistTitulo));
+                alertDialogSiNoOk.setMensaje(getString(R.string.elimHistMensaje, accountName));
+                alertDialogSiNoOk.setTargetFragment(this, 1);
+                alertDialogSiNoOk.show(getFragmentManager(), TAG);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void procesarBotonSiNoOk(int boton) {
+        int cantOriginal = adapter.getCount();
+        if (contrasennaDAO.eliminarNoUltimasPorCuenta(accountName) > 0) {
+            adapter.updatePasswordsList(contrasennaDAO.seleccionarPorCuenta(accountName));
+            CustomToast.Build(this, R.string.elimHistExitosa);
+        } else if (cantOriginal == 1) {
+            CustomToast.Build(this, R.string.elimHistSinContr);
+        } else {
+            CustomToast.Build(this, R.string.elimHistFallida);
         }
     }
 }

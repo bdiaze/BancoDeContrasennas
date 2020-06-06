@@ -89,4 +89,9 @@ public class AdapCuentasBusq extends BaseAdapter {
 
         return convertView;
     }
+
+    public void actualizarCuentas(List<CuentaConFecha> listaCuentas) {
+        this.listaCuentas = listaCuentas;
+        notifyDataSetChanged();
+    }
 }

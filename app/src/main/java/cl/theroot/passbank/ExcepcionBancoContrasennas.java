@@ -1,12 +1,9 @@
 package cl.theroot.passbank;
 
-import androidx.appcompat.app.AlertDialog;
+import cl.theroot.passbank.fragmento.AlertDialogSiNoOk;
 
-/**
- * Created by Benjamin on 05/10/2017.
- */
-
-public class ExcepcionBancoContrasennas extends Exception{
+public class ExcepcionBancoContrasennas extends Exception {
+    private static final String TAG = "BdC-ExcepcionBancoContr";
     private String titulo;
     private String mensaje;
 
@@ -25,10 +22,10 @@ public class ExcepcionBancoContrasennas extends Exception{
     }
 
     public void alertDialog(CustomFragment fragment) {
-        AlertDialog alertDialog = new AlertDialog.Builder(fragment.getContext()).create();
-        alertDialog.setTitle(titulo);
-        alertDialog.setMessage(mensaje);
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", (dialog, which) -> dialog.dismiss());
-        alertDialog.show();
+        AlertDialogSiNoOk alertDialogSiNoOk = new AlertDialogSiNoOk();
+        alertDialogSiNoOk.setTitulo(titulo);
+        alertDialogSiNoOk.setMensaje(mensaje);
+        alertDialogSiNoOk.setTargetFragment(fragment, 1);
+        alertDialogSiNoOk.show(fragment.getFragmentManager(), TAG);
     }
 }

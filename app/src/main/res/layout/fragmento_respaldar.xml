@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cl.theroot.passbank.fragmento.FragExportar">
+    tools:context="cl.theroot.passbank.fragmento.FragRespaldar">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,8 +17,15 @@
             android:gravity="center_horizontal"
             android:padding="5dp"
             android:text="@string/respDatos"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
+
+        <View
+            style="@style/EstiloImageOriginalWhite"
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
 
         <TextView
             android:id="@+id/textView11"
@@ -26,19 +33,20 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
+            android:layout_marginTop="10dp"
             android:padding="5dp"
             android:text="@string/descripExport"
-            android:textSize="15sp" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/textView12"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:gravity="center_horizontal"
             android:padding="5dp"
             android:text="@string/cuentaSelec"
-            android:textSize="15sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -48,12 +56,9 @@
 
             <ImageView
                 android:id="@+id/IV_vaciar_usuario"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginBottom="8dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:src="@drawable/baseline_close_24"
@@ -70,7 +75,7 @@
                 android:importantForAutofill="no"
                 android:inputType="textEmailAddress"
                 android:text=""
-                android:textSize="15sp" />
+                android:textSize="18sp" />
 
         </LinearLayout>
 
@@ -79,12 +84,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
             android:gravity="center_horizontal"
             android:padding="5dp"
             android:text="@string/cambiarCuenta"
-            android:textColor="@android:color/background_light"
-            android:textSize="12sp" />
+            android:textSize="16sp" />
 
     </LinearLayout>
 </ScrollView>

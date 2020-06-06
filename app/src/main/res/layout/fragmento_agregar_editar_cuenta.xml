@@ -16,7 +16,7 @@
             android:gravity="center_horizontal"
             android:padding="5dp"
             android:text="@string/agrEdtCuenta"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
         <EditText
@@ -100,7 +100,7 @@
                 android:layout_marginRight="10dp"
                 android:gravity="center"
                 android:text="@string/dias"
-                android:textSize="15sp" />
+                android:textSize="16sp" />
 
             <SeekBar
                 android:id="@+id/SB_validez"
@@ -117,7 +117,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/durInf"
-            android:textSize="15sp" />
+            android:textSize="16sp" />
 
         <Space
             android:layout_width="match_parent"
@@ -130,7 +130,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/categCuenta"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <ListView
@@ -148,6 +148,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginRight="2dp"
+                android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:contentDescription="@string/nuevaCategoria"
@@ -160,7 +161,8 @@
                 android:ems="10"
                 android:hint="@string/nuevaCategoria"
                 android:importantForAutofill="no"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:textSize="18sp"/>
 
         </LinearLayout>
 

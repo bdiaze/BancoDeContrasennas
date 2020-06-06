@@ -11,15 +11,23 @@
         android:layout_gravity="center_horizontal"
         android:padding="5dp"
         android:text="@string/detCategoria"
-        android:textSize="20sp"
+        android:textSize="22sp"
         android:textStyle="bold" />
+
+    <View
+        style="@style/EstiloImageOriginalWhite"
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
 
     <TextView
         style="@style/EstiloTextViewAtenuado"
         android:text="@string/nombreCateg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"/>
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"/>
 
     <TextView
         android:text=""

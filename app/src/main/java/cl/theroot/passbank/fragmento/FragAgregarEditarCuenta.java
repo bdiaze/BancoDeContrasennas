@@ -2,9 +2,9 @@ package cl.theroot.passbank.fragmento;
 
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +18,8 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,7 +28,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cl.theroot.passbank.ActividadPrincipal;
 import cl.theroot.passbank.Cifrador;
 import cl.theroot.passbank.CustomFragment;
 import cl.theroot.passbank.CustomToast;
@@ -48,10 +49,16 @@ import cl.theroot.passbank.dominio.Contrasenna;
 import cl.theroot.passbank.dominio.Cuenta;
 import cl.theroot.passbank.dominio.Parametro;
 
-public class FragAgregarEditarCuenta extends CustomFragment {
+public class FragAgregarEditarCuenta extends CustomFragment implements AlertDialogSiNoOk.iProcesarBotonSiNoOk, AlertDialogContMenuModoGenerador.iProcesarSeleccion {
     private static final String TAG = "BdC-FragAgrEdtCuenta";
-    private static final String GRABO = "GRABO";
+
+    private GeneradorContrasennas genContrasennas;
     private AdapCategoriasCheckBox adapter;
+    private ParametroDAO parametroDAO;
+    private CuentaDAO cuentaDAO;
+    private ContrasennaDAO contrasennaDAO;
+    private CategoriaCuentaDAO categoriaCuentaDAO;
+    private CategoriaDAO categoriaDAO;
 
     @BindView(R.id.TV_titule)
     TextView TV_titule;
@@ -78,49 +85,47 @@ public class FragAgregarEditarCuenta extends CustomFragment {
     @BindView(R.id.listview_categories_checkboxs)
     ListView listView;
 
+    private static final String KEY_STR_NOM_ANT = "KEY_STR_NOM_ANT";
+    private static final String KEY_LNG_CNT_IDN = "KEY_LNG_CNT_IDN";
+    private static final String KEY_BYT_MOD_GEN = "KEY_BYT_MOD_GEN";
+
     private String oldName;
     private Long oldPasswordID;
-
-    private String addEdit;
-
-    private ParametroDAO parametroDAO;
-    private CuentaDAO cuentaDAO;
-    private ContrasennaDAO contrasennaDAO;
-    private CategoriaCuentaDAO categoriaCuentaDAO;
-    private CategoriaDAO categoriaDAO;
-
-    private GeneradorContrasennas genContrasennas;
     private byte modoGenerador = 0;
-    private boolean yaGrabo = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
+        if (savedInstanceState != null) {
+            oldName = savedInstanceState.getString(KEY_STR_NOM_ANT);
+            oldPasswordID = savedInstanceState.getLong(KEY_LNG_CNT_IDN);
+            modoGenerador = savedInstanceState.getByte(KEY_BYT_MOD_GEN);
+        }
 
+        setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragmento_agregar_editar_cuenta, container, false);
         ButterKnife.bind(this, view);
 
-        categoriaDAO = new CategoriaDAO(getActivity().getApplicationContext());
-        categoriaCuentaDAO = new CategoriaCuentaDAO(getActivity().getApplicationContext());
-        contrasennaDAO = new ContrasennaDAO(getActivity().getApplicationContext());
-        cuentaDAO = new CuentaDAO(getActivity().getApplicationContext());
-        parametroDAO = new ParametroDAO(getActivity().getApplicationContext());
-
-        genContrasennas = new GeneradorContrasennas(getActivity().getApplicationContext());
+        categoriaDAO = new CategoriaDAO(getApplicationContext());
+        categoriaCuentaDAO = new CategoriaCuentaDAO(getApplicationContext());
+        contrasennaDAO = new ContrasennaDAO(getApplicationContext());
+        cuentaDAO = new CuentaDAO(getApplicationContext());
+        parametroDAO = new ParametroDAO(getApplicationContext());
+        genContrasennas = new GeneradorContrasennas(getApplicationContext());
 
         IV_passVisibility.setOnClickListener(v -> {
-            if (ET_password.getInputType() == 0x00000081) {
+            if (ET_password.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
                 int pointerPos = ET_password.getSelectionStart();
                 IV_passVisibility.setImageResource(R.drawable.baseline_visibility_off_24);
-                ET_password.setInputType(0x00080001);
+                ET_password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
                 ET_password.setSelection(pointerPos);
             } else {
                 int pointerPos = ET_password.getSelectionStart();
                 IV_passVisibility.setImageResource(R.drawable.baseline_visibility_24);
-                ET_password.setInputType(0x00000081);
+                ET_password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                 ET_password.setSelection(pointerPos);
             }
         });
+
         IV_passGenerator.setOnClickListener(v -> {
             parametroDAO.actualizarUna(new Parametro(NombreParametro.ULTIMO_MODO_GENERADOR.toString(), String.valueOf(modoGenerador), null));
             if (modoGenerador == 0) {
@@ -129,7 +134,7 @@ public class FragAgregarEditarCuenta extends CustomFragment {
                 ET_password.setText(genContrasennas.generar(false));
             }
         });
-        registerForContextMenu(IV_passGenerator);
+        //registerForContextMenu(IV_passGenerator);
 
         SB_validez.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -149,6 +154,7 @@ public class FragAgregarEditarCuenta extends CustomFragment {
 
             }
         });
+
         ET_validez.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -219,16 +225,7 @@ public class FragAgregarEditarCuenta extends CustomFragment {
             }
         });
 
-        listView.setOnTouchListener((view1, motionEvent) -> {
-            view1.getParent().requestDisallowInterceptTouchEvent(true);
-            return false;
-        });
-
-        oldName = null;
-        oldPasswordID = null;
-
         TV_titule.setText(getResources().getText(R.string.crearCuenta));
-        addEdit = "ADD";
         Parametro parValDefecto = parametroDAO.seleccionarUno(NombreParametro.VALIDEZ_DEFECTO.toString());
         if (parValDefecto != null) {
             ET_validez.setText(parValDefecto.getValor());
@@ -243,7 +240,6 @@ public class FragAgregarEditarCuenta extends CustomFragment {
                 Cuenta cuenta = cuentaDAO.seleccionarUna(oldName);
                 if (cuenta != null) {
                     TV_titule.setText(getResources().getText(R.string.editarCuenta));
-                    addEdit = "EDIT";
                     ET_name.setText(cuenta.getNombre());
                     ET_description.setText(cuenta.getDescripcion());
                     ET_validez.setText(String.valueOf(cuenta.getValidez()));
@@ -276,7 +272,23 @@ public class FragAgregarEditarCuenta extends CustomFragment {
             modoGenerador = Byte.parseByte(parametro.getValor());
         }
 
+        IV_passGenerator.setOnLongClickListener(v -> {
+            AlertDialogContMenuModoGenerador dialogContMenu = new AlertDialogContMenuModoGenerador();
+            dialogContMenu.setSeleccion(modoGenerador);
+            dialogContMenu.setTargetFragment(this,1);
+            dialogContMenu.show(getFragmentManager(), TAG);
+            return true;
+        });
+
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString(KEY_STR_NOM_ANT, oldName);
+        outState.putLong(KEY_LNG_CNT_IDN, oldPasswordID);
+        outState.putByte(KEY_BYT_MOD_GEN, modoGenerador);
+        super.onSaveInstanceState(outState);
     }
 
     //Creación del submenu del fragmento
@@ -337,19 +349,15 @@ public class FragAgregarEditarCuenta extends CustomFragment {
 
                     Cuenta cuenta = new Cuenta(name, description, validez);
                     //Se actualiza o inserta la cuenta deseada
-                    String nombreAntiguo = null;
-                    if (addEdit.equals("ADD")) {
+                    if (oldName == null) {
                         if (cuentaDAO.insertarUna(cuenta) == -1) {
                             throw new ExcepcionBancoContrasennas("Error - Cuenta No Creada", "Hubo un error con la base de datos, y su cuenta no fue creada.");
                         }
                     } else {
                         if (cuentaDAO.actualizarUna(oldName, cuenta) == 0) {
                             throw new ExcepcionBancoContrasennas("Error - Cuenta No Modificada", "Hubo un error con la base de datos, y su cuenta no fue modificada.");
-                        } else {
-                            nombreAntiguo = oldName;
                         }
                     }
-                    oldName = cuenta.getNombre();
 
                     //Se obtiene la fecha de creación de la contraseña
                     Calendar calendar = Calendar.getInstance();
@@ -360,49 +368,49 @@ public class FragAgregarEditarCuenta extends CustomFragment {
                         //Se obtiene la contraseña actual de la cuenta para comparar si es igual a la nueva
                         Contrasenna contAntigua = contrasennaDAO.seleccionarUna(oldPasswordID);
                         if (contAntigua != null) {
-                            if (!Cifrador.desencriptar(contAntigua.getValor(), ((ActividadPrincipal) getActivity()).getLlaveEncrip()).equals(password)) {
-                                Contrasenna contrasenna = new Contrasenna(null, oldName, Cifrador.encriptar(password, ((ActividadPrincipal) getActivity()).getLlaveEncrip()), formattedDate);
+                            if (!Cifrador.desencriptar(contAntigua.getValor(), actividadPrincipal().getLlaveEncrip()).equals(password)) {
+                                Contrasenna contrasenna = new Contrasenna(null, cuenta.getNombre(), Cifrador.encriptar(password, actividadPrincipal().getLlaveEncrip()), formattedDate);
                                 oldPasswordID = contrasennaDAO.insertarUna(contrasenna);
                                 cuenta.setVencInf(0);
                                 cuentaDAO.actualizarUna(cuenta.getNombre(), cuenta);
                             }
                         } else {
-                            Contrasenna contrasenna = new Contrasenna(null, oldName, Cifrador.encriptar(password, actividadPrincipal().getLlaveEncrip()), formattedDate);
+                            Contrasenna contrasenna = new Contrasenna(null, cuenta.getNombre(), Cifrador.encriptar(password, actividadPrincipal().getLlaveEncrip()), formattedDate);
                             oldPasswordID = contrasennaDAO.insertarUna(contrasenna);
                         }
                     } else {
-                        Contrasenna contrasenna = new Contrasenna(null, oldName, Cifrador.encriptar(password, actividadPrincipal().getLlaveEncrip()), formattedDate);
+                        Contrasenna contrasenna = new Contrasenna(null, cuenta.getNombre(), Cifrador.encriptar(password, actividadPrincipal().getLlaveEncrip()), formattedDate);
                         oldPasswordID = contrasennaDAO.insertarUna(contrasenna);
                     }
 
                     //Ya creada/actualizada la cuenta y contraseña, se deben actualizar las relaciones entre categorias y cuentas.
                     for (CategoriaSeleccionable categoria : adapter.getCategorias()) {
                         //Checkear si existe la relación
-                        CategoriaCuenta categoriaCuenta = categoriaCuentaDAO.seleccionarUna(categoria.getNombre(), oldName);
+                        CategoriaCuenta categoriaCuenta = categoriaCuentaDAO.seleccionarUna(categoria.getNombre(), cuenta.getNombre());
                         if (categoria.isSeleccionado()) {
                             //Si no existe, la creamos.
                             if (categoriaCuenta == null) {
-                                categoriaCuentaDAO.insertarUna(new CategoriaCuenta(categoria.getNombre(), oldName, 0));
+                                categoriaCuentaDAO.insertarUna(new CategoriaCuenta(categoria.getNombre(), cuenta.getNombre(), 0));
                             }
                         } else {
                             //Si existe, la eliminamos.
                             if (categoriaCuenta != null) {
-                                if (categoriaCuentaDAO.eliminarUna(categoria.getNombre(), oldName) == 0) {
+                                if (categoriaCuentaDAO.eliminarUna(categoria.getNombre(), cuenta.getNombre()) == 0) {
                                     Log.e(TAG, "No se pudo eliminar la relación Categoría/Cuenta");
                                 }
                             }
                         }
                     }
 
-                    if (addEdit.equals("ADD")) {
+                    if (oldName == null) {
                         CustomToast.Build(getActivity().getApplicationContext(), "Su cuenta fue creada exitosamente.");
                     } else {
                         CustomToast.Build(getActivity().getApplicationContext(), "Su cuenta fue modificada exitosamente.");
                     }
 
-                    ((ActividadPrincipal) getActivity()).cambiarFragmento(new FragCuentas());
-                    if (nombreAntiguo != null) {
-                        ((ActividadPrincipal) getActivity()).actualizarBundles(Cuenta.class, nombreAntiguo, cuenta.getNombre());
+                    actividadPrincipal().cambiarFragmento(new FragCuentas());
+                    if (oldName != null) {
+                        actividadPrincipal().actualizarBundles(Cuenta.class, oldName, cuenta.getNombre());
                     }
                     return true;
                 default:
@@ -411,70 +419,6 @@ public class FragAgregarEditarCuenta extends CustomFragment {
         } catch(ExcepcionBancoContrasennas ex) {
             ex.alertDialog(this);
             return true;
-        }
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getActivity().getMenuInflater();
-        inflater.inflate(R.menu.cont_menu_agregar_editar_cuenta, menu);
-        switch(modoGenerador) {
-            case 0:
-                menu.findItem(R.id.cont_menu_agregar_editar_cuenta_caracteres).setChecked(true);
-                break;
-            case 1:
-                menu.findItem(R.id.cont_menu_agregar_editar_cuenta_palabras).setChecked(true);
-                break;
-        }
-    }
-
-    //Creación de la funcionalidad del menu contextual
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.cont_menu_agregar_editar_cuenta_caracteres:
-                item.setChecked(true);
-                modoGenerador = 0;
-
-                //Para mantener abierto el context menu al hacer click
-                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
-                item.setActionView(new View(getActivity().getApplicationContext()));
-                item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
-                    @Override
-                    public boolean onMenuItemActionExpand(MenuItem item) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onMenuItemActionCollapse(MenuItem item) {
-                        return false;
-                    }
-                });
-
-                return false;
-            case R.id.cont_menu_agregar_editar_cuenta_palabras:
-                item.setChecked(true);
-                modoGenerador = 1;
-
-                //Para mantener abierto el context menu al hacer click
-                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
-                item.setActionView(new View(getActivity().getApplicationContext()));
-                item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
-                    @Override
-                    public boolean onMenuItemActionExpand(MenuItem item) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onMenuItemActionCollapse(MenuItem item) {
-                        return false;
-                    }
-                });
-
-                return false;
-            default:
-                return super.onContextItemSelected(item);
         }
     }
 
@@ -533,5 +477,15 @@ public class FragAgregarEditarCuenta extends CustomFragment {
         ViewGroup.LayoutParams params = listView.getLayoutParams();
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
+    }
+
+    @Override
+    public void procesarBotonSiNoOk(int boton) {
+
+    }
+
+    @Override
+    public void procesarSeleccion(int radioButton) {
+        modoGenerador = (byte) radioButton;
     }
 }

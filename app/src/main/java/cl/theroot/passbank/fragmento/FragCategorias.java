@@ -1,7 +1,7 @@
 package cl.theroot.passbank.fragmento;
 
 import android.os.Bundle;
-import android.view.ContextMenu;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -11,61 +11,86 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.NonNull;
 
-import java.util.List;
-
-import cl.theroot.passbank.ActividadPrincipal;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cl.theroot.passbank.CustomFragment;
+import cl.theroot.passbank.CustomToast;
 import cl.theroot.passbank.R;
 import cl.theroot.passbank.adaptador.AdapCategorias;
 import cl.theroot.passbank.datos.CategoriaDAO;
 import cl.theroot.passbank.datos.nombres.ColCategoria;
 import cl.theroot.passbank.dominio.Categoria;
 
-public class FragCategorias extends CustomFragment {
-    //private static final String TAG = "BdC-Categorías";
-    private AdapCategorias adapter;
-    private List<Categoria> listItems;
-
-    private ListView listView;
+public class FragCategorias extends CustomFragment implements AlertDialogContMenuEditarEliminar.iProcesarBoton, AlertDialogSiNoOk.iProcesarBotonSiNoOk {
+    private static final String TAG = "BdC-FragCategorias";
 
     private CategoriaDAO categoriaDAO;
+    private AdapCategorias adapter;
+    private AdapterView.OnItemClickListener mOnItemClickListener;
 
-    public Categoria selectedCategory;
+    @BindView(R.id.listView)
+    ListView listView;
+
+    private static final String KEY_STR_SEL_CAT = "KEY_STR_SEL_CAT";
+    private static final String KEY_STR_FLE_VIS = "KEY_STR_FLE_VIS";
+
+    private String selectedCategory;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        boolean ocultarFlechas = true;
+        if (savedInstanceState != null) {
+            selectedCategory = savedInstanceState.getString(KEY_STR_SEL_CAT);
+            ocultarFlechas = savedInstanceState.getBoolean(KEY_STR_FLE_VIS);
+        }
+
         setHasOptionsMenu(true);
-        categoriaDAO = new CategoriaDAO(getActivity().getApplicationContext());
         View view = inflater.inflate(R.layout.fragmento_categorias, container, false);
+        ButterKnife.bind(this, view);
 
-        listItems = categoriaDAO.seleccionarTodas();
+        categoriaDAO = new CategoriaDAO(actividadPrincipal());
 
-        adapter = new AdapCategorias(getActivity(), listItems);
-        listView = view.findViewById(R.id.listView);
-
+        adapter = new AdapCategorias(getActivity(), categoriaDAO.seleccionarTodas());
         listView.setAdapter(adapter);
-        adapter.setOcultarFlechas(true);
-        registerForContextMenu(listView);
+        adapter.setOcultarFlechas(ocultarFlechas);
 
-        listView.setOnItemClickListener(mOnItemClickListener);
-        getActivity().invalidateOptionsMenu();
-        return view;
-    }
-
-    //Creación de click normal
-    AdapterView.OnItemClickListener mOnItemClickListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            Categoria categoria = adapter.getItem(i);
+        mOnItemClickListener = (parent, view1, position, id) -> {
+            Categoria categoria = adapter.getItem(position);
             FragDetalleCategoria fragDetalleCategoria = new FragDetalleCategoria();
             Bundle bundle = new Bundle();
             bundle.putString(ColCategoria.NOMBRE.toString(), categoria.getNombre());
             fragDetalleCategoria.setArguments(bundle);
-            ((ActividadPrincipal) getActivity()).cambiarFragmento(fragDetalleCategoria);
-        }
-    };
+            actividadPrincipal().cambiarFragmento(fragDetalleCategoria);
+        };
+        listView.setOnItemClickListener(mOnItemClickListener);
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i(TAG, "onItemLongClick(...) - Se realizó un click largo en una categoría.");
+
+                selectedCategory = adapter.getItem(position).getNombre();
+                if (selectedCategory.length() == 0) return false;
+
+                AlertDialogContMenuEditarEliminar dialogContMenu = new AlertDialogContMenuEditarEliminar();
+                dialogContMenu.setTargetFragment(FragCategorias.this, 1);
+                dialogContMenu.show(getFragmentManager(), TAG);
+
+                return true;
+            }
+        });
+
+        return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString(KEY_STR_SEL_CAT, selectedCategory);
+        outState.putBoolean(KEY_STR_FLE_VIS, adapter.getOcultarFlechas());
+        super.onSaveInstanceState(outState);
+    }
 
     //Creación del submenu del fragmento
     @Override
@@ -74,30 +99,17 @@ public class FragCategorias extends CustomFragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    @Override
-    public void onPrepareOptionsMenu(Menu menu){
-        if (adapter != null) {
-            menu.findItem(R.id.sub_menu_categorias_habilitar_orden).setEnabled(adapter.getCount() > 1);
-        }
-        super.onPrepareOptionsMenu(menu);
-    }
-
     //Creación de funcionalidad del submenu
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (!((ActividadPrincipal) getActivity()).isSesionIniciada()) {
-            return false;
-        }
         switch (item.getItemId()) {
             case R.id.sub_menu_categorias_agregar:
-                return ((ActividadPrincipal) getActivity()).cambiarFragmento(new FragAgregarEditarCategoria());
+                return actividadPrincipal().cambiarFragmento(new FragAgregarEditarCategoria());
             case R.id.sub_menu_categorias_habilitar_orden:
                 item.setChecked(!item.isChecked());
                 if (item.isChecked()) {
-                    unregisterForContextMenu(listView);
                     listView.setOnItemClickListener(null);
                     adapter.setOcultarFlechas(false);
                 } else {
-                    registerForContextMenu(listView);
                     listView.setOnItemClickListener(mOnItemClickListener);
                     adapter.setOcultarFlechas(true);
                 }
@@ -107,48 +119,40 @@ public class FragCategorias extends CustomFragment {
         }
     }
 
-    //Creación del menu contextual del fragmento
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getActivity().getMenuInflater();
-        inflater.inflate(R.menu.cont_menu_categorias, menu);
-    }
-
-    //Creación de la funcionalidad del menu contextual
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        if (!((ActividadPrincipal) getActivity()).isSesionIniciada()) {
-            return false;
-        }
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        int index = info.position;
-        selectedCategory = adapter.getItem(index);
-
-        switch (item.getItemId()) {
-            case R.id.cont_menu_categories_edit:
+    public void procesarBoton(int boton) {
+        switch (boton) {
+            case AlertDialogContMenuEditarEliminar.BOTON_EDITAR:
+                Log.i(TAG, String.format("procesarBoton(...) - Procesar Botón Editar - Categoría %s.", selectedCategory));
                 FragAgregarEditarCategoria fragAgregarEditarCategoria = new FragAgregarEditarCategoria();
                 Bundle args = new Bundle();
-                args.putString(ColCategoria.NOMBRE.toString(), selectedCategory.getNombre());
+                args.putString(ColCategoria.NOMBRE.toString(), selectedCategory);
                 fragAgregarEditarCategoria.setArguments(args);
-                return ((ActividadPrincipal) getActivity()).cambiarFragmento(fragAgregarEditarCategoria);
-            case R.id.cont_menu_categories_delete:
-                AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-                alertDialog.setTitle("Eliminacón de una Categoría");
-                alertDialog.setMessage("¿Está seguro que desea eliminar la categoria " + selectedCategory.getNombre() + "? Las cuentas asociadas no se eliminarán, pero ya no se relacionarán con esta categoría.");
-                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO", (dialog, which) -> dialog.dismiss());
-                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "SÍ", (dialog, which) -> {
-                    if (categoriaDAO.eliminarUna(selectedCategory.getNombre()) > 0) {
-                        listItems = categoriaDAO.seleccionarTodas();
-                        adapter.updateCategoryList(listItems);
-                        ((ActividadPrincipal) getActivity()).actualizarBundles(Categoria.class, selectedCategory.getNombre(), null);
-                    }
-                    dialog.dismiss();
-                });
-                alertDialog.show();
-                return true;
-            default:
-                return super.onContextItemSelected(item);
+                actividadPrincipal().cambiarFragmento(fragAgregarEditarCategoria);
+                break;
+            case AlertDialogContMenuEditarEliminar.BOTON_ELIMINAR:
+                Log.i(TAG, String.format("procesarBoton(...) - Procesar Botón Eliminar - Categoría %s.", selectedCategory));
+                AlertDialogSiNoOk alertDialogSiNoOk = new AlertDialogSiNoOk();
+                alertDialogSiNoOk.setTipo(AlertDialogSiNoOk.TIPO_SI_NO);
+                alertDialogSiNoOk.setTitulo(getString(R.string.elimCategTitulo));
+                alertDialogSiNoOk.setMensaje(getString(R.string.elimCategMensaje, selectedCategory));
+                alertDialogSiNoOk.setTargetFragment(this, 1);
+                alertDialogSiNoOk.show(getFragmentManager(), TAG);
+                break;
         }
     }
+
+    @Override
+    public void procesarBotonSiNoOk(int boton) {
+        if (boton == AlertDialogSiNoOk.BOTON_SI) {
+            if (categoriaDAO.eliminarUna(selectedCategory) > 0) {
+                adapter.updateCategoryList(categoriaDAO.seleccionarTodas());
+                actividadPrincipal().actualizarBundles(Categoria.class, selectedCategory, null);
+                CustomToast.Build(this, R.string.elimCategExitosa);
+            } else {
+                CustomToast.Build(this, R.string.elimCategFallida);
+            }
+        }
+    }
+
 }

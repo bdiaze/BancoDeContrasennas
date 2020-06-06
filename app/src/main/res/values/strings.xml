@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">Banco de Contraseñas</string>
 
+    <!-- Actividad Principal -->
+    <string name="cerrarAppTitulo">Cerrar la Aplicación</string>
+    <string name="cerrarAppMensaje">Está a punto de cerrar la aplicación, ¿Desea continuar?</string>
+    <string name="cerrarSesionTitulo">Cerrar Sesión</string>
+    <string name="cerrarSesionMensaje">Está a punto de cerrar sesión, ¿Desea continuar?</string>
+
     <!-- Crear Llave Maestra -->
     <string name="bienvenida">Bienvenido al Banco de Contraseñas</string>
     <string name="instruccionCreacion">Para comenzar a usar la aplicación, deberá crear su Llave Maestra, la cual será utilizada para acceder a la aplicación y cifrar los datos sensibles.\n\n¡Es muy importante que no olvide su Llave Maestra, y que la mantenga segura de posibles intrusos!</string>
@@ -28,12 +34,22 @@
     <string name="contrasennaVencida">Contraseña Caducada</string>
     <string name="detalleContrasennaVencida">La contraseña de su cuenta \"%1$s\" ha caducado, se recomienda su actualización.</string>
     <string name="detalleContrasennaVencidaConOtras">La contraseña de su cuenta \"%1$s\", junto a otras %2$s contraseñas, se encuentra caducada, se recomienda su actualización.</string>
+    <string name="llaveRequeridaTitulo">Llave Maestra Requerida</string>
+    <string name="llaveRequeridaMensaje">Se requiere el ingreso de su Llave Maestra para el inicio de sesión.</string>
+    <string name="llaveIncorrectaTitulo">Llave Maestra Incorrecta</string>
+    <string name="llaveIncorrectaMensaje">La Llave Maestra ingresada no es correcta, favor intentar de nuevo.</string>
 
     <!-- Cuentas -->
     <string name="listaCuentas">Lista de Cuentas</string>
     <string name="contrCaducada">Contraseña Sin Actualizar</string>
     <string name="buscarCuenta">Buscar...</string>
     <string name="limpiarBusq">Limpiar</string>
+    <string name="elimCuentaTitulo">Eliminación de Cuenta</string>
+    <string name="elimCuentaMensaje">¿Está seguro que desea eliminar la cuenta %1$s?</string>
+    <string name="elimCuentaExitosa">La cuenta fue eliminada exitosamente.</string>
+    <string name="elimCuentaFallida">Hubo un error al eliminar la cuenta.</string>
+    <string name="infoContVencTitulo">Contraseña Caducada</string>
+    <string name="infoContVencMensaje">La contraseña de esta cuenta caducó, se recomienda su actualización.</string>
 
     <!-- Detalle Cuenta -->
     <string name="detCuenta">Detalle de la Cuenta</string>
@@ -46,6 +62,11 @@
     <!-- Historial de Contraseñas -->
     <string name="histCuenta">Historial de Cuenta</string>
     <string name="histDe">Historial de %1$s</string>
+    <string name="elimHistTitulo">Eliminación del Historial</string>
+    <string name="elimHistMensaje">¿Está seguro que desea eliminar el historial de la cuenta %1$s? Todas las contraseñas, excepto la última, serán removidas permanentemente.</string>
+    <string name="elimHistExitosa">Su historial de contraseñas fue limpiado exitosamente.</string>
+    <string name="elimHistSinContr">No hay contraseñas en el historial para limpiar.</string>
+    <string name="elimHistFallida">Hubo un error al limpiar el historial de contraseñas.</string>
 
     <!-- Agregar/Editar Cuenta -->
     <string name="agrEdtCuenta">Agregar/Editar una Cuenta</string>
@@ -65,6 +86,10 @@
 
     <!-- Categorías -->
     <string name="listCateg">Lista de Categorías</string>
+    <string name="elimCategTitulo">Eliminación de una Categoría</string>
+    <string name="elimCategMensaje">¿Está seguro que desea eliminar la categoría %1$s? Las cuentas asociadas no se eliminarán, pero ya no se relacionarán con esta categoría.</string>
+    <string name="elimCategExitosa">La categoría fue eliminada exitosamente.</string>
+    <string name="elimCategFallida">Hubo un error al eliminar la categoría.</string>
 
     <!-- Detalle Categoría -->
     <string name="detCategoria">Detalle de la Categoría</string>
@@ -85,7 +110,7 @@
 
     <!-- Configuración -->
     <string name="config">Configuración</string>
-    <string name="datosInvalidos">Error, Datos Inválidos.</string>
+    <string name="datosInvalidos">Datos Inválidos</string>
 
     <!-- Cambio Llave Maestra -->
     <string name="cambLlaveMaestra">Cambiar Llave Maestra</string>
@@ -94,13 +119,30 @@
     <string name="introLlaveCamb">Introduzca su nueva llave:</string>
     <string name="llaveCambiada">Nueva Llave Maestra</string>
     <string name="reintroLlaveCamb">Reintroduzca su nueva llave:</string>
+    <string name="errorLlaveReqTitulo">Llave Maestra Requerida</string>
+    <string name="errorLlaveReqMensaje">Se requiere el ingreso de su Llave Maestra Actual para realizar el cambio.</string>
+    <string name="errorLlaveIncTitulo">Llave Maestra Incorrecta</string>
+    <string name="errorLlaveIncMensaje">La Llave Maestra Actual ingresada no es correcta, favor intentar de nuevo.</string>
+    <string name="errorLlaveVaciaTitulo">Campo Vacío</string>
+    <string name="errorLlaveVaciaMensaje">Para realizar el cambio se requiere el ingreso de su Nueva Llave Maestra.</string>
+    <string name="errorLlaveCortaTitulo">Llave Muy Corta</string>
+    <string name="errorLlaveCortaMensaje">La Nueva Llave Maestra elegida es muy corta, debería tener al menos %1$d caracteres.</string>
+    <string name="errorLlaveNoCoincTitulo">No Coincidencia</string>
+    <string name="errorLlaveNoCoincMensaje">No coinciden las Nuevas Llaves Maestras ingresadas, favor reingresar los datos.</string>
+    <string name="errorLlaveUtilizTitulo">Llave Ya Utilizada</string>
+    <string name="errorLlaveUtilizMensaje">La Nueva Llave Maestra debe ser distinta a la Llave Maestra Actual.</string>
+    <string name="llaveMaestraActualizada">Su Llave Maestra fue actualizada exitosamente.</string>
 
     <!-- Exportar -->
     <string name="respDatos">Respaldar Datos</string>
     <string name="descripExport">Si desea respaldar sus datos en Google Drive\n¡Este es el lugar para ello!</string>
     <string name="cambiarCuenta">Para cambiar la cuenta seleccionada,\nhaga click sobre el nombre de la cuenta.</string>
     <string name="respCreadoExitosamente">¡Tu respaldo fue creado exitosamente!</string>
-    <string name="creacionRespFallida">No se pudo crear tu respaldo</string>
+    <string name="creacionRespFallida">No se pudo crear su respaldo.</string>
+    <string name="creandoRespaldoTitulo">Creando Respaldo</string>
+    <string name="creandoRespaldoMensaje">Su respaldo está siendo creado, favor esperar...</string>
+    <string name="debeSeleccionarCuenta">¡Acción Cancelada!\nDebe seleccionar una cuenta antes de realizar el respaldo.</string>
+    <string name="respaldoIniciado">Se dio por iniciado el proceso de respaldo, revise sus notificaciones para ver el progreso.</string>
 
     <!-- Acerca De -->
     <string name="acercaDe">Acerca De</string>
@@ -154,4 +196,18 @@
     <string name="historial">Historial</string>
     <string name="resp">Respaldar</string>
     <string name="limpiar">Limpiar</string>
+
+    <!-- Alert Dialog -->
+    <string name="titulo">Título</string>
+    <string name="mensaje">Mensaje</string>
+    <string name="si">Si</string>
+    <string name="no">No</string>
+    <string name="ok">Ok</string>
+
+    <!-- Respaldar Service -->
+    <string name="respServTitulo">Respaldando...</string>
+    <string name="respServMensaje">Se está efectuando el respaldo a Google Drive.</string>
+    <string name="respCreadoTitulo">¡Respaldo Creado!</string>
+    <string name="respCreadoMensaje">Su respaldo fue creado exitosamente.</string>
+    <string name="respFallidoTitulo">Respaldo Fallido</string>
 </resources>

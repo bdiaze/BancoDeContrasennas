@@ -4,17 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageButton
+    <ImageView
+        style="@style/EstiloImageOriginalWhite"
         android:id="@+id/IB_bajar_elemento"
         android:contentDescription="@string/bajarElemento"
+        android:layout_gravity="center_vertical"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:src="@drawable/baseline_arrow_downward_24"/>
 
-    <ImageButton
+    <ImageView
+        style="@style/EstiloImageOriginalWhite"
         android:id="@+id/IB_subir_elemento"
         android:contentDescription="@string/subirElemento"
-        android:layout_gravity="end"
+        android:layout_gravity="center_vertical"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:src="@drawable/baseline_arrow_upward_24"/>
@@ -23,8 +26,8 @@
         android:textSize="18sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:padding="5dp" />
+        android:gravity="center_horizontal"
+        android:text="@string/nombreCateg"
+        android:padding="8dp" />
 
 </LinearLayout>

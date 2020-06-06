@@ -50,7 +50,7 @@ import cl.theroot.passbank.dominio.Parametro;
 
 import static android.app.Activity.RESULT_OK;
 
-public class FragCrearLlaveMaestra extends CustomFragment implements View.OnClickListener {
+public class FragCrearLlaveMaestra extends CustomFragment implements View.OnClickListener, AlertDialogSiNoOk.iProcesarBotonSiNoOk {
     private static final String TAG = "BdC-FragCrearLlaveMa...";
     private static final int REQUEST_CODE_SIGN_IN = 1;
 
@@ -332,5 +332,10 @@ public class FragCrearLlaveMaestra extends CustomFragment implements View.OnClic
             }
         }
         super.onActivityResult(requestCode, resultCode, resultData);
+    }
+
+    @Override
+    public void procesarBotonSiNoOk(int boton) {
+
     }
 }

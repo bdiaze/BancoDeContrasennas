@@ -16,17 +16,24 @@
             android:gravity="center"
             android:padding="5dp"
             android:text="@string/cambLlaveMaestra"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
+
+        <View
+            style="@style/EstiloImageOriginalWhite"
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
 
         <TextView
             android:id="@+id/textView4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:gravity="center"
             android:text="@string/introLlaveActual"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/ET_oldPassword"
@@ -38,16 +45,17 @@
             android:hint="@string/llaveActual"
             android:importantForAutofill="no"
             android:inputType="textPassword"
-            android:textSize="14sp" />
+            android:textSize="16sp"
+            android:layout_marginHorizontal="20dp"/>
 
         <TextView
             android:id="@+id/textView8"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:gravity="center"
             android:text="@string/introLlaveCamb"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/ET_newPassword"
@@ -59,7 +67,8 @@
             android:hint="@string/llaveCambiada"
             android:importantForAutofill="no"
             android:inputType="textPassword"
-            android:textSize="14sp" />
+            android:textSize="16sp"
+            android:layout_marginHorizontal="20dp"/>
 
         <TextView
             android:id="@+id/textView9"
@@ -68,7 +77,7 @@
             android:layout_marginTop="10dp"
             android:gravity="center"
             android:text="@string/reintroLlaveCamb"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/ET_newRepPassword"
@@ -80,7 +89,8 @@
             android:hint="@string/llaveCambiada"
             android:importantForAutofill="no"
             android:inputType="textPassword"
-            android:textSize="14sp" />
+            android:textSize="16sp"
+            android:layout_marginHorizontal="20dp"/>
 
     </LinearLayout>
 </ScrollView>

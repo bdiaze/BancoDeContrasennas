@@ -1,9 +1,7 @@
 package cl.theroot.passbank.fragmento;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,8 +12,8 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 
 import com.jakewharton.rxbinding3.widget.RxTextView;
 
@@ -25,8 +23,8 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cl.theroot.passbank.ActividadPrincipal;
 import cl.theroot.passbank.CustomFragment;
+import cl.theroot.passbank.CustomToast;
 import cl.theroot.passbank.R;
 import cl.theroot.passbank.adaptador.AdapCategoriasCuentas;
 import cl.theroot.passbank.adaptador.AdapCuentasBusq;
@@ -47,18 +45,16 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class FragCuentas extends CustomFragment {
+public class FragCuentas extends CustomFragment implements AlertDialogContMenuEditarEliminar.iProcesarBoton, AlertDialogSiNoOk.iProcesarBotonSiNoOk {
     private static final String TAG = "BdC-FragCuentas";
+
     private AdapCategoriasCuentas adapter;
     private AdapCuentasBusq adapterBusq;
-
     private CuentaDAO cuentaDAO;
     private CategoriaDAO categoriaDAO;
     private CategoriaCuentaDAO categoriaCuentaDAO;
     private ContrasennaDAO contrasennaDAO;
 
-    private List<CategoriaListaCuentas> listaCategorias = new ArrayList<>();
-    private List<CuentaConFecha> resultadosBusqueda = new ArrayList<>();
     private CompositeDisposable disposable;
 
     @BindView(R.id.expListView)
@@ -68,14 +64,17 @@ public class FragCuentas extends CustomFragment {
     @BindView(R.id.resultBusqListView)
     ListView resultBusqListView;
 
-    public FragCuentas() {
+    private static final String KEY_STR_NOM_CUE = "KEY_STR_NOM_CUE";
 
-    }
+    private String nombreCuenta;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
+        if (savedInstanceState != null) {
+            nombreCuenta = savedInstanceState.getString(KEY_STR_NOM_CUE);
+        }
 
+        setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragmento_cuentas, container, false);
         ButterKnife.bind(this, view);
 
@@ -84,24 +83,21 @@ public class FragCuentas extends CustomFragment {
         categoriaCuentaDAO = new CategoriaCuentaDAO(getActivity().getApplicationContext());
         contrasennaDAO = new ContrasennaDAO(getActivity().getApplicationContext());
 
-        fillAccountsInfo();
+        adapter = new AdapCategoriasCuentas(getActivity(), this, fillAccountsInfo());
+        expListView.setAdapter(adapter);
 
         // Se obtiene última búsqueda de cuentas para carga automática...
+        List<CuentaConFecha> resultadosBusqueda = new ArrayList<>();
         if (this.getArguments() != null) {
             String cuentaBuscada = this.getArguments().getString(ColCuenta.NOMBRE.toString());
             if (cuentaBuscada != null && cuentaBuscada.trim().length() > 0) {
                 buscarET.setText(cuentaBuscada);
-                buscarCuentas();
+                resultadosBusqueda = buscarCuentas();
             }
         }
 
-        adapter = new AdapCategoriasCuentas(getActivity(), listaCategorias);
         adapterBusq = new AdapCuentasBusq(getActivity(), resultadosBusqueda);
-
-        expListView.setAdapter(adapter);
         resultBusqListView.setAdapter(adapterBusq);
-        registerForContextMenu(expListView);
-        registerForContextMenu(resultBusqListView);
 
         RxTextView.textChanges(buscarET)
                 .debounce(300, TimeUnit.MILLISECONDS)
@@ -116,8 +112,7 @@ public class FragCuentas extends CustomFragment {
 
                     @Override
                     public void onNext(CharSequence charSequence) {
-                        buscarCuentas(charSequence.toString());
-                        adapterBusq.notifyDataSetChanged();
+                        adapterBusq.actualizarCuentas(buscarCuentas(charSequence.toString()));
                     }
 
                     @Override
@@ -131,23 +126,33 @@ public class FragCuentas extends CustomFragment {
                     }
                 });
 
-        expListView.setOnGroupClickListener((expandableListView, view13, i, l) -> false);
-
-        expListView.setOnGroupExpandListener(i -> {
-
-        });
-
-        expListView.setOnGroupCollapseListener(i -> {
-
-        });
-
         expListView.setOnChildClickListener((expandableListView, view12, i, i1, l) -> {
             Cuenta cuenta = adapter.getChild(i, i1);
             FragDetalleCuenta fragDetalleCuenta = new FragDetalleCuenta();
             Bundle bundle = new Bundle();
             bundle.putString(ColCuenta.NOMBRE.toString(), cuenta.getNombre());
             fragDetalleCuenta.setArguments(bundle);
-            return ((ActividadPrincipal) getActivity()).cambiarFragmento(fragDetalleCuenta);
+            return actividadPrincipal().cambiarFragmento(fragDetalleCuenta);
+        });
+
+        expListView.setOnItemLongClickListener((parent, view13, position, id) -> {
+            Log.i(TAG, "onItemLongClick(...) - Se realizó un click largo en una cuenta o categoría.");
+
+            long packedPosition = expListView.getExpandableListPosition(position);
+            int itemType = ExpandableListView.getPackedPositionType(packedPosition);
+            int groupPosition = ExpandableListView.getPackedPositionGroup(packedPosition);
+            int childPosition = ExpandableListView.getPackedPositionChild(packedPosition);
+
+            if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+                nombreCuenta = adapter.getChild(groupPosition, childPosition).getNombre();
+                if (nombreCuenta.length() == 0) { return false; }
+
+                AlertDialogContMenuEditarEliminar dialogContMenu = new AlertDialogContMenuEditarEliminar();
+                dialogContMenu.setTargetFragment(FragCuentas.this, 1);
+                dialogContMenu.show(getFragmentManager(), TAG);
+            }
+
+            return true;
         });
 
         resultBusqListView.setOnItemClickListener((parent, view1, position, id) -> {
@@ -156,10 +161,29 @@ public class FragCuentas extends CustomFragment {
             Bundle bundle = new Bundle();
             bundle.putString(ColCuenta.NOMBRE.toString(), cuenta.getNombre());
             fragDetalleCuenta.setArguments(bundle);
-            ((ActividadPrincipal) getActivity()).cambiarFragmento(fragDetalleCuenta);
+            actividadPrincipal().cambiarFragmento(fragDetalleCuenta);
+        });
+
+        resultBusqListView.setOnItemLongClickListener((parent, view14, position, id) -> {
+            Log.i(TAG, "onItemLongClick(...) - Se realizó un click largo en una cuenta o categoría.");
+
+            nombreCuenta = adapterBusq.getItem(position).getNombre();
+            if (nombreCuenta.length() == 0) return false;
+
+            AlertDialogContMenuEditarEliminar dialogContMenu = new AlertDialogContMenuEditarEliminar();
+            dialogContMenu.setTargetFragment(FragCuentas.this, 1);
+            dialogContMenu.show(getFragmentManager(), TAG);
+
+            return true;
         });
 
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString(KEY_STR_NOM_CUE, nombreCuenta);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -183,105 +207,16 @@ public class FragCuentas extends CustomFragment {
 
     //Creación de la funcionalidad del submenu del fragmento
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (!((ActividadPrincipal) getActivity()).isSesionIniciada()) {
-            return false;
-        }
         if (item.getItemId() == R.id.sub_menu_accounts_add) {
-            return ((ActividadPrincipal) getActivity()).cambiarFragmento(new FragAgregarEditarCuenta());
+            return actividadPrincipal().cambiarFragmento(new FragAgregarEditarCuenta());
         }
         return super.onOptionsItemSelected(item);
     }
 
-
-    //Creación del menu contextual para click prolongado en una Account
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-
-        String nombreCuenta = "";
-        if (v.getId() == R.id.resultBusqListView) {
-            ListView.AdapterContextMenuInfo info = (ListView.AdapterContextMenuInfo) menuInfo;
-            nombreCuenta = adapterBusq.getItem(info.position).getNombre();
-        } else if (v.getId() == R.id.expListView) {
-            ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
-            int type = ExpandableListView.getPackedPositionType(info.packedPosition);
-            if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-                int ig = ExpandableListView.getPackedPositionGroup(info.packedPosition);
-                int ic = ExpandableListView.getPackedPositionChild(info.packedPosition);
-                nombreCuenta = adapter.getChild(ig, ic).getNombre();
-            }
-        }
-
-        if (nombreCuenta.length() > 0) {
-            MenuInflater inflater = getActivity().getMenuInflater();
-            inflater.inflate(R.menu.cont_menu_cuentas, menu);
-
-            MenuItem miEdt = menu.findItem(R.id.cont_menu_accounts_edit);
-            MenuItem miDel = menu.findItem(R.id.cont_menu_accounts_delete);
-            Intent i = new Intent();
-            i.putExtra(ColCuenta.NOMBRE.toString(), nombreCuenta);
-            miEdt.setIntent(i);
-            miDel.setIntent(i);
-        }
-    }
-
-    //Creación de la funcionalidad del menu contextual
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        if (!((ActividadPrincipal) getActivity()).isSesionIniciada()) {
-            return false;
-        }
-
-        Intent i = item.getIntent();
-        if (i != null) {
-            Bundle b = i.getExtras();
-            if (b != null) {
-                final String nombreCuenta = b.getString(ColCuenta.NOMBRE.toString());
-
-                if (nombreCuenta == null || nombreCuenta.isEmpty()) {
-                    return false;
-                }
-
-                switch (item.getItemId()) {
-                    case R.id.cont_menu_accounts_edit:
-                        FragAgregarEditarCuenta fragAgregarEditarCuenta = new FragAgregarEditarCuenta();
-                        Bundle args = new Bundle();
-                        args.putString(ColCuenta.NOMBRE.toString(), nombreCuenta);
-                        fragAgregarEditarCuenta.setArguments(args);
-                        ((ActividadPrincipal) getActivity()).cambiarFragmento(fragAgregarEditarCuenta);
-                        return true;
-
-                    case R.id.cont_menu_accounts_delete:
-                        AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-                        alertDialog.setTitle("Eliminación de Cuenta");
-                        alertDialog.setMessage("¿Está seguro que desea eliminar la cuenta " + nombreCuenta + "?");
-                        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO", (dialog, which) -> dialog.dismiss());
-                        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "SÍ", (dialog, which) -> {
-                            if (cuentaDAO.eliminarUna(nombreCuenta) > 0) {
-                                fillAccountsInfo();
-                                buscarCuentas();
-                                adapter.notifyDataSetChanged();
-                                adapterBusq.notifyDataSetChanged();
-                                ((ActividadPrincipal) getActivity()).actualizarBundles(Cuenta.class, nombreCuenta, null);
-                            }
-                            dialog.dismiss();
-                        });
-
-                        alertDialog.show();
-                        return true;
-
-                    default:
-                        return super.onContextItemSelected(item);
-                }
-            }
-        }
-
-        return false;
-    }
-
     //Llenado de los datos a mostrar
-    private void fillAccountsInfo() {
-        listaCategorias.clear();
+    private List<CategoriaListaCuentas> fillAccountsInfo() {
+        List<CategoriaListaCuentas> salida = new ArrayList<>();
+
         for (Categoria categoria : categoriaDAO.seleccionarTodas()) {
             List<CuentaConFecha> cuentas = new ArrayList<>();
             for (CategoriaCuenta categoriaCuenta : categoriaCuentaDAO.seleccionarPorCategoria(categoria.getNombre())) {
@@ -297,7 +232,7 @@ public class FragCuentas extends CustomFragment {
                     Log.e(TAG, "No se encontró la cuenta con el nombre: " + categoriaCuenta.getNombreCuenta());
                 }
             }
-            listaCategorias.add(new CategoriaListaCuentas(categoria.getNombre(), categoria.getPosicion(), cuentas));
+            salida.add(new CategoriaListaCuentas(categoria.getNombre(), categoria.getPosicion(), cuentas));
         }
 
         List<CuentaConFecha> cuentas = new ArrayList<>();
@@ -309,15 +244,18 @@ public class FragCuentas extends CustomFragment {
             }
             cuentas.add(new CuentaConFecha(cuenta.getNombre(), cuenta.getDescripcion(), cuenta.getValidez(), fecha));
         }
-        listaCategorias.add(new CategoriaListaCuentas("", null, cuentas));
+        salida.add(new CategoriaListaCuentas("", null, cuentas));
+
+        return salida;
     }
 
-    private void buscarCuentas() {
-        buscarCuentas(buscarET.getText().toString());
+    private List<CuentaConFecha> buscarCuentas() {
+        return buscarCuentas(buscarET.getText().toString());
     }
 
-    private void buscarCuentas(String busqueda) {
-        resultadosBusqueda.clear();
+    private List<CuentaConFecha> buscarCuentas(String busqueda) {
+        List<CuentaConFecha> salida = new ArrayList<>();
+
         if (busqueda.trim().length() > 0) {
             // Se graba última búsqueda generada...
             if (this.getArguments() == null) { this.setArguments(new Bundle()); }
@@ -330,11 +268,53 @@ public class FragCuentas extends CustomFragment {
                 if (contrasenna != null) {
                     fecha = contrasenna.getFecha();
                 }
-                resultadosBusqueda.add(new CuentaConFecha(cuenta.getNombre(), cuenta.getDescripcion(), cuenta.getValidez(), fecha));
+                salida.add(new CuentaConFecha(cuenta.getNombre(), cuenta.getDescripcion(), cuenta.getValidez(), fecha));
             }
             expListView.setVisibility(View.INVISIBLE);
         } else {
             expListView.setVisibility(View.VISIBLE);
+        }
+
+        return salida;
+    }
+
+    @Override
+    public void procesarBoton(int boton) {
+        switch(boton) {
+            case AlertDialogContMenuEditarEliminar.BOTON_EDITAR:
+                Log.i(TAG, String.format("procesarBoton(...) - Procesar Botón Editar - Cuenta %s.", nombreCuenta));
+                FragAgregarEditarCuenta fragAgregarEditarCuenta = new FragAgregarEditarCuenta();
+                Bundle args = new Bundle();
+                args.putString(ColCuenta.NOMBRE.toString(), nombreCuenta);
+                fragAgregarEditarCuenta.setArguments(args);
+                actividadPrincipal().cambiarFragmento(fragAgregarEditarCuenta);
+                break;
+            case AlertDialogContMenuEditarEliminar.BOTON_ELIMINAR:
+                Log.i(TAG, String.format("procesarBoton(...) - Procesar Botón Eliminar - Cuenta %s.", nombreCuenta));
+                AlertDialogSiNoOk alertDialogSiNoOk = new AlertDialogSiNoOk();
+                alertDialogSiNoOk.setTipo(AlertDialogSiNoOk.TIPO_SI_NO);
+                alertDialogSiNoOk.setTitulo(getString(R.string.elimCuentaTitulo));
+                alertDialogSiNoOk.setMensaje(getString(R.string.elimCuentaMensaje, nombreCuenta));
+                alertDialogSiNoOk.setTargetFragment(this, 1);
+                alertDialogSiNoOk.show(getFragmentManager(), TAG);
+                break;
+        }
+    }
+
+    @Override
+    public void procesarBotonSiNoOk(int boton) {
+        if (boton == AlertDialogSiNoOk.BOTON_SI) {
+            Log.i(TAG, String.format("procesarBotonSiNoOk(...) - Procesar Boton Sí - Cuenta %s.", nombreCuenta));
+            if (cuentaDAO.eliminarUna(nombreCuenta) > 0) {
+                Log.i(TAG, "procesarBotonSiNoOk(...) - Cuenta seleccionada eliminada.");
+                adapter.actualizarCategoriasCuentas(fillAccountsInfo());
+                adapterBusq.actualizarCuentas(buscarCuentas());
+                actividadPrincipal().actualizarBundles(Cuenta.class, nombreCuenta, null);
+                CustomToast.Build(this, R.string.elimCuentaExitosa);
+            } else {
+                Log.e(TAG, "procesarBotonSiNoOk(...) - No se pudo eliminar la cuenta seleccionada.");
+                CustomToast.Build(this, R.string.elimCuentaFallida);
+            }
         }
     }
 }

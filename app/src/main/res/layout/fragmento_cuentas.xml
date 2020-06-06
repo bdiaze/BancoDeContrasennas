@@ -13,15 +13,13 @@
         android:layout_gravity="center_horizontal"
         android:padding="5dp"
         android:text="@string/listaCuentas"
-        android:textSize="20sp"
+        android:textSize="22sp"
         android:textStyle="bold"/>
 
     <EditText
         android:id="@+id/buscarEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
         android:hint="@string/buscarCuenta"
         android:importantForAutofill="no"
         android:inputType="text"

@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="@string/introLlaveMaestra"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
         <EditText
@@ -29,7 +29,7 @@
             android:hint="@string/contrasenna"
             android:importantForAutofill="no"
             android:inputType="textPassword"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/B_login"
@@ -38,7 +38,7 @@
             android:layout_gravity="center"
             android:ems="10"
             android:text="@string/ingresar"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
 
     </LinearLayout>
 </ScrollView>

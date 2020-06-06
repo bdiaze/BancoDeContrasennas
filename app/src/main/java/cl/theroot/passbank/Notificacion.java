@@ -1,29 +1,54 @@
 package cl.theroot.passbank;
 
 import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
-import android.graphics.BitmapFactory;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 
-import cl.theroot.passbank.dominio.TipoNotificacion;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
+
+import static cl.theroot.passbank.App.CHANNEL_ID_GENERAL;
 
 
 public class Notificacion {
     private static final String TAG = "BdC-Notificacion";
 
-    public static void Mostrar(Context context, TipoNotificacion tipo, String titulo, String mensaje) {
-        NotificationChannel channel = new NotificationChannel(tipo.getId(), tipo.getNombre(), NotificationManager.IMPORTANCE_DEFAULT);
+    public static void Mostrar(Context context, int id, int idTitulo, int idMensaje) {
+        Mostrar(context, id, context.getString(idTitulo), context.getString(idMensaje));
+    }
 
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.createNotificationChannel(channel);
-        Notification.Builder builder = new Notification.Builder(context, tipo.getId())
-                .setSmallIcon(android.R.drawable.ic_dialog_info)
-                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_strongbox))
+    public static void Mostrar(Context context, int idTitulo, int idMensaje) {
+        Mostrar(context, 1, context.getString(idTitulo), context.getString(idMensaje));
+    }
+
+    public static void Mostrar(Context context, String titulo, String mensaje) {
+        Mostrar(context, 1, titulo, mensaje);
+    }
+
+    public static void Mostrar(Context context, int id, String titulo, String mensaje) {
+        Intent notificationIntent = new Intent(context, ActividadPrincipal.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+
+        Drawable vectorDrawable = VectorDrawableCompat.create(context.getResources(), R.drawable.ic_strongbox, context.getTheme());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        vectorDrawable.draw(canvas);
+
+        Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID_GENERAL)
                 .setContentTitle(titulo)
                 .setContentText(mensaje)
-                .setStyle(new Notification.BigTextStyle().bigText(mensaje))
-                .setAutoCancel(true);
-        notificationManager.notify(1, builder.build());
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setLargeIcon(bitmap)
+                .setContentIntent(pendingIntent)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(mensaje))
+                .build();
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(id, notification);
     }
 }

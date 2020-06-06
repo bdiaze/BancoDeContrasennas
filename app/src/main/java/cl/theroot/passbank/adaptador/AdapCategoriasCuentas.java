@@ -1,7 +1,6 @@
 package cl.theroot.passbank.adaptador;
 
 import android.app.Activity;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,25 +11,27 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import cl.theroot.passbank.CustomFragment;
 import cl.theroot.passbank.R;
+import cl.theroot.passbank.datos.ParametroDAO;
+import cl.theroot.passbank.datos.nombres.NombreParametro;
 import cl.theroot.passbank.dominio.CategoriaListaCuentas;
 import cl.theroot.passbank.dominio.CuentaConFecha;
 import cl.theroot.passbank.dominio.Parametro;
-import cl.theroot.passbank.datos.ParametroDAO;
-import cl.theroot.passbank.datos.nombres.NombreParametro;
+import cl.theroot.passbank.fragmento.AlertDialogSiNoOk;
 
 
 public class AdapCategoriasCuentas extends BaseExpandableListAdapter {
     private static final String TAG = "BdC-AdapCatCuentas";
     private LayoutInflater inflater;
+    private CustomFragment fragment;
     private List<CategoriaListaCuentas> listaCategorias;
-    private Context context;
     private ParametroDAO parametroDAO;
 
-    public AdapCategoriasCuentas(Activity context, List<CategoriaListaCuentas> listaCategorias) {
+    public AdapCategoriasCuentas(Activity context, CustomFragment fragment, List<CategoriaListaCuentas> listaCategorias) {
         this.inflater = LayoutInflater.from(context);
+        this.fragment = fragment;
         this.listaCategorias = listaCategorias;
-        this.context = context;
         parametroDAO = new ParametroDAO(context.getApplicationContext());
     }
 
@@ -93,7 +94,7 @@ public class AdapCategoriasCuentas extends BaseExpandableListAdapter {
             view.setTag(groupViewHolder);
         }
 
-        if (!getGroup(i).getNombre().equals("")) {
+        if (getGroup(i).getNombre().length() > 0) {
             groupViewHolder.CategoryName.setText(getGroup(i).getNombre());
         } else {
             Parametro parametro = parametroDAO.seleccionarUno(NombreParametro.NOMBRE_CATEGORIA_COMPLETA.toString());
@@ -138,6 +139,13 @@ public class AdapCategoriasCuentas extends BaseExpandableListAdapter {
             childViewHolder.claveExpirada.setVisibility(View.INVISIBLE);
         } else {
             childViewHolder.claveExpirada.setVisibility(View.VISIBLE);
+            childViewHolder.claveExpirada.setOnClickListener(v -> {
+                AlertDialogSiNoOk dialogSiNoOk = new AlertDialogSiNoOk();
+                dialogSiNoOk.setTitulo(fragment.getString(R.string.infoContVencTitulo));
+                dialogSiNoOk.setMensaje(fragment.getString(R.string.infoContVencMensaje));
+                dialogSiNoOk.setTargetFragment(fragment, 1);
+                dialogSiNoOk.show(fragment.getFragmentManager(), TAG);
+            });
         }
         return view;
     }
@@ -145,5 +153,10 @@ public class AdapCategoriasCuentas extends BaseExpandableListAdapter {
     @Override
     public boolean isChildSelectable(int i, int i1) {
         return true;
+    }
+
+    public void actualizarCategoriasCuentas(List<CategoriaListaCuentas> listaCategorias) {
+        this.listaCategorias = listaCategorias;
+        notifyDataSetChanged();
     }
 }

@@ -1,7 +1,6 @@
 package cl.theroot.passbank;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -10,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -32,7 +30,7 @@ import cl.theroot.passbank.dominio.Contrasenna;
 import cl.theroot.passbank.dominio.Cuenta;
 import cl.theroot.passbank.dominio.CuentaConFecha;
 import cl.theroot.passbank.dominio.Parametro;
-import cl.theroot.passbank.dominio.TipoNotificacion;
+import cl.theroot.passbank.fragmento.AlertDialogSiNoOk;
 import cl.theroot.passbank.fragmento.FragAcercaDe;
 import cl.theroot.passbank.fragmento.FragAgregarEditarCategoria;
 import cl.theroot.passbank.fragmento.FragAgregarEditarCuenta;
@@ -43,30 +41,34 @@ import cl.theroot.passbank.fragmento.FragCrearLlaveMaestra;
 import cl.theroot.passbank.fragmento.FragCuentas;
 import cl.theroot.passbank.fragmento.FragDetalleCategoria;
 import cl.theroot.passbank.fragmento.FragDetalleCuenta;
-import cl.theroot.passbank.fragmento.FragExportar;
 import cl.theroot.passbank.fragmento.FragHistorialCuenta;
 import cl.theroot.passbank.fragmento.FragInicioSesion;
+import cl.theroot.passbank.fragmento.FragRespaldar;
 
-public class ActividadPrincipal extends AppCompatActivity {
+public class ActividadPrincipal extends AppCompatActivity implements AlertDialogSiNoOk.iProcesarBotonSiNoOk{
     private static final String TAG = "BdC-ActividadPrincipal";
+
     private FragmentManager administradorFragmentos = getSupportFragmentManager();
-    private CustomFragment fragmentoActual;
+    private Menu menu;
 
-    private final String estadoLogin = "Sesión Iniciada";
-    private final String llaveEncriptacion = "Llave Encriptación";
-    private final String onStopTime = "Tiempo Stop";
-    private final String historialFragmentos = "Historial Fragmentos";
-    private final String historialBundles = "Historial Argumentos";
-    private final String ultimoFragmento = "Último Fragmento";
-    private final String ultimoBundle = "Último Bundle";
+    private static final String KEY_BLN_SSN_INI = "KEY_BLN_SSN_INI";
+    private static final String KEY_STR_LLV_ENC = "KEY_STR_LLV_ENC";
+    private static final String KEY_LNG_STP_TME = "KEY_LNG_STP_TME";
+    private static final String KEY_FLT_POS_HOR = "KEY_FLT_POS_HOR";
+    private static final String KEY_FLT_POS_VER = "KEY_FLT_POS_VER";
+    private static final String KEY_INT_IDN_ALT = "KEY_INT_IDN_ALT";
+    private static final String KEY_SAL_HIS_FRG = "KEY_SAL_HIS_FRG";
+    private static final String KEY_SAL_HIS_ARG = "KEY_SAL_HIS_ARG";
+    private static final String KEY_STR_ULT_FRG = "KEY_STR_ULT_FRG";
+    private static final String KEY_STR_ULT_ARG = "KEY_STR_ULT_ARG";
 
-    private boolean sesionIniciada;
+    private String llaveEncrip;
+    private Boolean sesionIniciada;
     private Long onStop;
-    private String llaveEncrip = null;
+    private Integer indicadorAlerta;
     private List<Class> listaFragmentos = new ArrayList<>();
     private List<Bundle> listaBundles = new ArrayList<>();
-
-    private Menu menu;
+    private CustomFragment fragmentoActual;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,17 +76,22 @@ public class ActividadPrincipal extends AppCompatActivity {
         setContentView(R.layout.actividad_principal);
 
         if (savedInstanceState != null) {
-            sesionIniciada = savedInstanceState.getBoolean(estadoLogin);
-            llaveEncrip = savedInstanceState.getString(llaveEncriptacion);
-            onStop = savedInstanceState.getLong(onStopTime);
-            if (savedInstanceState.getStringArrayList(historialFragmentos) != null) {
-                listaFragmentos = stringsToListaFragmentos(savedInstanceState.getStringArrayList(historialFragmentos));
+            llaveEncrip = savedInstanceState.getString(KEY_STR_LLV_ENC);
+
+            sesionIniciada = savedInstanceState.getBoolean(KEY_BLN_SSN_INI);
+            onStop = savedInstanceState.getLong(KEY_LNG_STP_TME);
+
+            indicadorAlerta = savedInstanceState.getInt(KEY_INT_IDN_ALT);
+
+            if (savedInstanceState.getStringArrayList(KEY_SAL_HIS_FRG) != null) {
+                listaFragmentos = stringsToListaFragmentos(savedInstanceState.getStringArrayList(KEY_SAL_HIS_FRG));
             }
-            if (savedInstanceState.getStringArrayList(historialBundles) != null) {
-                listaBundles = stringsToListaBundles(savedInstanceState.getStringArrayList(historialBundles));
+            if (savedInstanceState.getStringArrayList(KEY_SAL_HIS_ARG) != null) {
+                listaBundles = stringsToListaBundles(savedInstanceState.getStringArrayList(KEY_SAL_HIS_ARG));
             }
-            Class clase = stringToClass(savedInstanceState.getString(ultimoFragmento));
-            Bundle bundle = stringToBundle(savedInstanceState.getString(ultimoBundle));
+
+            Class clase = stringToClass(savedInstanceState.getString(KEY_STR_ULT_FRG));
+            Bundle bundle = stringToBundle(savedInstanceState.getString(KEY_STR_ULT_ARG));
             try {
                 Log.i(TAG, "onCreate(...) - Se recrea el fragmento que se estaba mostrando anteriormente.");
                 CustomFragment fragmento = (CustomFragment) clase.getConstructor().newInstance();
@@ -99,39 +106,49 @@ public class ActividadPrincipal extends AppCompatActivity {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        Log.i(TAG, "onSaveInstanceState(...) - Se inicia etapa onSaveInstanceState del ciclo de vida de la aplicación.");
+
+        if (llaveEncrip != null) {
+            savedInstanceState.putString(KEY_STR_LLV_ENC, llaveEncrip);
+        }
+
+        if (sesionIniciada != null) {
+            savedInstanceState.putBoolean(KEY_BLN_SSN_INI, sesionIniciada);
+            Log.i(TAG, String.format("onSaveInstanceState(...) - Se guarda el estado de la variable sesionIniciada con valor %s.", sesionIniciada));
+        }
+
+        if (onStop != null) {
+            savedInstanceState.putLong(KEY_LNG_STP_TME, onStop);
+            Log.i(TAG, String.format("onSaveInstanceState(...) - Se guarda el estado de la variable onStop con valor %d.", onStop));
+        }
+
+        if (indicadorAlerta != null) {
+            savedInstanceState.putInt(KEY_INT_IDN_ALT, indicadorAlerta);
+            Log.i(TAG, String.format("onSaveInstanceState(...) - Se guarda el estado de la variable indicadorAlerta con valor %d.", indicadorAlerta));
+        }
+
+        //Almacenar las listas de historiales
+        savedInstanceState.putStringArrayList(KEY_SAL_HIS_FRG, new ArrayList<>(listaFragmentoToStrings(listaFragmentos)));
+        savedInstanceState.putStringArrayList(KEY_SAL_HIS_ARG, new ArrayList<>(listaBundlesToStrings(listaBundles)));
+
+        //Almacenar el fragmento actual
+        savedInstanceState.putString(KEY_STR_ULT_FRG, fragmentoActual.getClass().getName());
+        savedInstanceState.putString(KEY_STR_ULT_ARG, bundleToString(fragmentoActual.getArguments()));
+
+        Log.i(TAG, "onSaveInstanceState(...) - Se termina etapa onSaveInstanceState.");
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
     public void onStop() {
         Log.i(TAG, "onStop() - Se inicia etapa onStop del ciclo de vida de la aplicación.");
+
         onStop = Calendar.getInstance().getTimeInMillis();
         Log.i(TAG, String.format("onStop() - Se setea la variable onStop con el valor %d.", onStop));
-        super.onStop();
+
         Log.i(TAG, "onStop() - Se termina la etapa onStop.");
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        Log.i(TAG, "onSaveInstanceState(...) - Se inicia etapa onSaveInstanceState del ciclo de vida de la aplicación.");
-
-        savedInstanceState.putBoolean(estadoLogin, sesionIniciada);
-        savedInstanceState.putString(llaveEncriptacion, llaveEncrip);
-        savedInstanceState.putLong(onStopTime, onStop);
-        Log.i(TAG, String.format("onSaveInstanceState(...) - Se guarda el estado de la variable sesionIniciada con valor %s.", sesionIniciada));
-        Log.i(TAG, String.format("onSaveInstanceState(...) - Se guarda el estado de la variable onStop con valor %d: ", onStop));
-
-        //Almacenar las listas de historiales
-        savedInstanceState.putStringArrayList(historialFragmentos, new ArrayList<>(listaFragmentoToStrings(listaFragmentos)));
-        savedInstanceState.putStringArrayList(historialBundles, new ArrayList<>(listaBundlesToStrings(listaBundles)));
-
-        //Almacenar el fragmento actual
-        savedInstanceState.putString(ultimoFragmento, fragmentoActual.getClass().getName());
-        savedInstanceState.putString(ultimoBundle, bundleToString(fragmentoActual.getArguments()));
-
-        super.onSaveInstanceState(savedInstanceState);
-        Log.i(TAG, "onSaveInstanceState(...) - Se termina etapa onSaveInstanceState.");
+        super.onStop();
     }
 
     @Override
@@ -172,15 +189,12 @@ public class ActividadPrincipal extends AppCompatActivity {
         Log.i(TAG, "onBackPressed() - Se inicia proceso para volver al fragmento anterior.");
         if (listaFragmentos.isEmpty()) {
             Log.i(TAG, "onBackPressed() - El historial está vacío por lo cuál se consulta si se desea cerrar la aplicación.");
-            AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-            alertDialog.setTitle("Cerrar la Aplicación");
-            alertDialog.setMessage("Está a punto de cerrar la aplicación, ¿Desea continuar?");
-            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO", (dialog, which) -> dialog.dismiss());
-            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "SÍ", (dialog, which) -> {
-                finish();
-                dialog.dismiss();
-            });
-            alertDialog.show();
+            indicadorAlerta = 1;
+            AlertDialogSiNoOk dialogSiNoOk = new AlertDialogSiNoOk();
+            dialogSiNoOk.setTipo(AlertDialogSiNoOk.TIPO_SI_NO);
+            dialogSiNoOk.setTitulo(getString(R.string.cerrarAppTitulo));
+            dialogSiNoOk.setMensaje(getString(R.string.cerrarAppMensaje));
+            dialogSiNoOk.show(getSupportFragmentManager(), TAG);
         } else {
             Class clase = listaFragmentos.get(listaFragmentos.size() - 1);
             Bundle bundle = listaBundles.get(listaBundles.size() - 1);
@@ -188,15 +202,12 @@ public class ActividadPrincipal extends AppCompatActivity {
 
             if (clase == FragInicioSesion.class) {
                 Log.i(TAG, "onBackPressed() - Como la pantalla anterior es la de inicio de sesión, se consulta si desea cerrar sesión.");
-                AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-                alertDialog.setTitle("Cerrar Sesión");
-                alertDialog.setMessage("Está a punto de cerrar sesión, ¿Desea continuar?");
-                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO", (dialog, which) -> dialog.dismiss());
-                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "SÍ", (dialog, which) -> {
-                    userLogOut();
-                    dialog.dismiss();
-                });
-                alertDialog.show();
+                indicadorAlerta = 2;
+                AlertDialogSiNoOk dialogSiNoOk = new AlertDialogSiNoOk();
+                dialogSiNoOk.setTipo(AlertDialogSiNoOk.TIPO_SI_NO);
+                dialogSiNoOk.setTitulo(getString(R.string.cerrarSesionTitulo));
+                dialogSiNoOk.setMensaje(getString(R.string.cerrarSesionMensaje));
+                dialogSiNoOk.show(getSupportFragmentManager(), TAG);
             } else {
                 Log.i(TAG, "onBackPressed() - Se elimina del historial el fragmento al que se cambiará, y se realiza el cambio.");
                 listaFragmentos.remove(listaFragmentos.size() - 1);
@@ -371,6 +382,23 @@ public class ActividadPrincipal extends AppCompatActivity {
         informarCuentaVencida();
     }
 
+    public void userLogOut() {
+        Log.i(TAG, "userLogOut() - Se cierra la sesión del usuario.");
+        sesionIniciada = false;
+        llaveEncrip = null;
+        if (menu != null) {
+            menu.close();
+        }
+        ParametroDAO parametroDAO = new ParametroDAO(getApplicationContext());
+        Parametro parametro = parametroDAO.seleccionarUno(NombreParametro.RESULTADO_HASH.toString());
+        if (parametro != null && parametro.getValor().length() == 0) {
+            cambiarFragmento(new FragCrearLlaveMaestra());
+            return;
+        }
+
+        cambiarFragmento(new FragInicioSesion());
+    }
+
     public void informarCuentaVencida() {
         CuentaDAO cuentaDAO = new CuentaDAO(getApplicationContext());
         ContrasennaDAO contrasennaDAO = new ContrasennaDAO(getApplicationContext());
@@ -398,29 +426,12 @@ public class ActividadPrincipal extends AppCompatActivity {
             } else {
                 descripcion = getResources().getString(R.string.detalleContrasennaVencidaConOtras, cuentaAInformar.getNombre(), String.valueOf(cantCaducada - 1));
             }
-            Notificacion.Mostrar(getApplicationContext(), TipoNotificacion.GENERAL, titulo, descripcion);
+            Notificacion.Mostrar(getApplicationContext(), titulo, descripcion);
             cuentaAInformar.setVencInf(1);
             if (cuentaDAO.actualizarUna(cuentaAInformar.getNombre(), cuentaAInformar) != 1) {
                 CustomToast.Build(this, "Error al actualizar estado de informe de caducidad de cuenta.");
             }
         }
-    }
-
-    public void userLogOut() {
-        Log.i(TAG, "userLogOut() - Se cierra la sesión del usuario.");
-        sesionIniciada = false;
-        llaveEncrip = null;
-        if (menu != null) {
-            menu.close();
-        }
-        ParametroDAO parametroDAO = new ParametroDAO(getApplicationContext());
-        Parametro parametro = parametroDAO.seleccionarUno(NombreParametro.RESULTADO_HASH.toString());
-        if (parametro != null && parametro.getValor().length() == 0) {
-            cambiarFragmento(new FragCrearLlaveMaestra());
-            return;
-        }
-
-        cambiarFragmento(new FragInicioSesion());
     }
 
     private List<String> listaFragmentoToStrings(List<Class> clases) {
@@ -470,8 +481,8 @@ public class ActividadPrincipal extends AppCompatActivity {
         if (FragDetalleCuenta.class.getName().equals(nombre)) {
             return FragDetalleCuenta.class;
         }
-        if (FragExportar.class.getName().equals(nombre)) {
-            return FragExportar.class;
+        if (FragRespaldar.class.getName().equals(nombre)) {
+            return FragRespaldar.class;
         }
         if (FragHistorialCuenta.class.getName().equals(nombre)) {
             return FragHistorialCuenta.class;
@@ -526,5 +537,20 @@ public class ActividadPrincipal extends AppCompatActivity {
 
     public void setLlaveEncrip(String llaveEncrip) {
         this.llaveEncrip = llaveEncrip;
+    }
+
+    @Override
+    public void procesarBotonSiNoOk(int boton) {
+        if (boton == AlertDialogSiNoOk.BOTON_SI) {
+            Log.i(TAG, String.format("procesarBotonSiNoOk(...) - indicadorAlerta: %d.", indicadorAlerta));
+            switch (indicadorAlerta) {
+                case 1:
+                    finish();
+                    break;
+                case 2:
+                    userLogOut();
+                    break;
+            }
+        }
     }
 }

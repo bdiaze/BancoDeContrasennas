@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="5sp"
+    android:layout_margin="5dp"
     android:orientation="vertical"
-    android:padding="2sp">
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/TV_nombreParametro"
@@ -12,22 +12,21 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:maxLines="1"
-        android:paddingStart="2sp"
-        android:paddingEnd="2sp"
+        android:paddingStart="3sp"
+        android:paddingEnd="3sp"
         android:text="@string/nombreParametro"
-        android:textSize="15sp" />
+        android:textSize="16sp" />
 
     <EditText
         android:id="@+id/ET_valorParametro"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="@string/valor"
         android:imeOptions="actionDone"
         android:importantForAutofill="no"
         android:inputType="text|textNoSuggestions"
         android:text="@string/valorParametro"
-        android:textSize="17sp"
+        android:textSize="18sp"
         android:textStyle="bold" />
 
 </LinearLayout>

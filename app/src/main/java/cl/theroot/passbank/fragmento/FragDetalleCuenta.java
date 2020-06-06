@@ -7,8 +7,10 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,11 +21,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.NonNull;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cl.theroot.passbank.ActividadPrincipal;
 import cl.theroot.passbank.Cifrador;
 import cl.theroot.passbank.CustomFragment;
 import cl.theroot.passbank.CustomToast;
@@ -38,10 +39,12 @@ import cl.theroot.passbank.dominio.Contrasenna;
 import cl.theroot.passbank.dominio.Cuenta;
 import cl.theroot.passbank.dominio.Parametro;
 
-public class FragDetalleCuenta extends CustomFragment {
+public class FragDetalleCuenta extends CustomFragment implements AlertDialogSiNoOk.iProcesarBotonSiNoOk{
     private static final String TAG = "BdC-FragDetalleCuenta";
 
-    private static final String PASS_INPUT_TYPE = "PassInputType";
+    private CuentaDAO cuentaDAO;
+    private ParametroDAO parametroDAO;
+    private Bundle bundle;
 
     @BindView(R.id.TV_password)
     TextView TV_password;
@@ -54,35 +57,32 @@ public class FragDetalleCuenta extends CustomFragment {
     @BindView(R.id.TV_clickCopiar)
     TextView TV_clickCopiar;
 
-    private Bundle bundle;
-
-    private CuentaDAO cuentaDAO;
-    private ParametroDAO parametroDAO;
+    private static final String KEY_INT_INP_TIP = "KEY_INT_INP_TIP";
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        int inputType = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD;
+        if (savedInstanceState != null) {
+            inputType = savedInstanceState.getInt(KEY_INT_INP_TIP);
+        }
 
+        setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragmento_detalle_cuenta, container, false);
         ButterKnife.bind(this, view);
 
-        ContrasennaDAO contrasennaDAO = new ContrasennaDAO(getActivity().getApplicationContext());
-        cuentaDAO = new CuentaDAO(getActivity().getApplicationContext());
+        ContrasennaDAO contrasennaDAO = new ContrasennaDAO(getApplicationContext());
+        cuentaDAO = new CuentaDAO(getApplicationContext());
         parametroDAO = new ParametroDAO(getApplicationContext());
+        bundle = this.getArguments();
 
-        if (savedInstanceState != null) {
-            int inputType = savedInstanceState.getInt(PASS_INPUT_TYPE);
-            if (inputType != 0x00000081) {
-                cambiarVisualizacion(true);
-            } else {
-                cambiarVisualizacion(false);
-            }
+        if (inputType != (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+            cambiarVisualizacion(true);
         } else {
             cambiarVisualizacion(false);
         }
 
         IV_passVisibility.setOnClickListener(v -> {
-            if (TV_password.getInputType() == 0x00000081) {
+            if (TV_password.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
                 cambiarVisualizacion(true);
             } else {
                 cambiarVisualizacion(false);
@@ -93,7 +93,6 @@ public class FragDetalleCuenta extends CustomFragment {
         TV_description.setText(getResources().getText(R.string.descripNoDefin));
         TV_password.setText(getResources().getText(R.string.contraNoDefin));
 
-        bundle = this.getArguments();
         if (bundle != null) {
             String accountName = bundle.getString(ColCuenta.NOMBRE.toString());
             if (accountName != null) {
@@ -107,7 +106,7 @@ public class FragDetalleCuenta extends CustomFragment {
                         TV_password.setText(Cifrador.desencriptar(contrasenna.getValor(), actividadPrincipal().getLlaveEncrip()));
                         TV_password.setOnClickListener((View v) -> {
                             // Si se está mostrando la contraseña, se agrega al clipboard...
-                            if (TV_password.getInputType() != 0x00000081) {
+                            if (TV_password.getInputType() != (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
                                 ClipboardManager clipboard = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
                                 ClipData clip = ClipData.newPlainText(PortapapelesReceiver.LABEL_CLIPBOARD, TV_password.getText());
                                 clipboard.setPrimaryClip(clip);
@@ -124,12 +123,9 @@ public class FragDetalleCuenta extends CustomFragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            savedInstanceState.putInt(PASS_INPUT_TYPE, TV_password.getInputType());
-        }
-
-        super.onSaveInstanceState(savedInstanceState);
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt(KEY_INT_INP_TIP, TV_password.getInputType());
+        super.onSaveInstanceState(outState);
     }
 
     //Creación del submenú del fragmento
@@ -142,43 +138,33 @@ public class FragDetalleCuenta extends CustomFragment {
     //Creación de la funcionalidad del fragmento
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (!((ActividadPrincipal) getActivity()).isSesionIniciada()) {
-            return false;
-        }
         switch (item.getItemId()) {
             case R.id.sub_menu_show_account_back:
                 getActivity().onBackPressed();
                 return true;
-            //return ((ActividadPrincipal) getActivity()).cambiarFragmento(new AdapCuentas());
 
             case R.id.sub_menu_show_account_edit:
                 if (bundle != null) {
                     FragAgregarEditarCuenta fragAgregarEditarCuenta = new FragAgregarEditarCuenta();
                     fragAgregarEditarCuenta.setArguments(bundle);
-                    return ((ActividadPrincipal) getActivity()).cambiarFragmento(fragAgregarEditarCuenta);
+                    return actividadPrincipal().cambiarFragmento(fragAgregarEditarCuenta);
                 } else {
                     return true;
                 }
 
             case R.id.sub_menu_show_account_delete:
                 if (bundle != null) {
-                    final String name = bundle.getString(ColCuenta.NOMBRE.toString());
+                    String name = bundle.getString(ColCuenta.NOMBRE.toString());
                     if (name == null) {
                         Log.e(TAG, "El nombre de la cuenta no vienen en el bundle.");
                         return false;
                     }
-                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-                    alertDialog.setTitle("Eliminación de Cuenta");
-                    alertDialog.setMessage("¿Está seguro que desea eliminar la cuenta " + name + "?");
-                    alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO", (dialog, which) -> dialog.dismiss());
-                    alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "SÍ", (dialog, which) -> {
-                        if (cuentaDAO.eliminarUna(name) > 0) {
-                            ((ActividadPrincipal) getActivity()).cambiarFragmento(new FragCuentas());
-                            ((ActividadPrincipal) getActivity()).actualizarBundles(Cuenta.class, name, null);
-                        }
-                        dialog.dismiss();
-                    });
-                    alertDialog.show();
+                    AlertDialogSiNoOk alertDialogSiNoOk = new AlertDialogSiNoOk();
+                    alertDialogSiNoOk.setTipo(AlertDialogSiNoOk.TIPO_SI_NO);
+                    alertDialogSiNoOk.setTitulo(getString(R.string.elimCuentaTitulo));
+                    alertDialogSiNoOk.setMensaje(getString(R.string.elimCuentaMensaje, name));
+                    alertDialogSiNoOk.setTargetFragment(this, 1);
+                    alertDialogSiNoOk.show(getFragmentManager(), TAG);
                 }
                 return true;
 
@@ -186,7 +172,7 @@ public class FragDetalleCuenta extends CustomFragment {
                 if (bundle != null) {
                     FragHistorialCuenta fragHistorialCuenta = new FragHistorialCuenta();
                     fragHistorialCuenta.setArguments(bundle);
-                    return ((ActividadPrincipal) getActivity()).cambiarFragmento(fragHistorialCuenta);
+                    return actividadPrincipal().cambiarFragmento(fragHistorialCuenta);
                 } else {
                     return true;
                 }
@@ -199,11 +185,13 @@ public class FragDetalleCuenta extends CustomFragment {
     private void cambiarVisualizacion(boolean mostrarContrasenna) {
         if (mostrarContrasenna) {
             IV_passVisibility.setImageResource(R.drawable.baseline_visibility_off_24);
-            TV_password.setInputType(0x00080001);
+            TV_password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+            TV_password.setTypeface(null, Typeface.BOLD);
             TV_clickCopiar.setVisibility(View.VISIBLE);
         } else {
             IV_passVisibility.setImageResource(R.drawable.baseline_visibility_24);
-            TV_password.setInputType(0x00000081);
+            TV_password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            TV_password.setTypeface(null, Typeface.BOLD);
             TV_clickCopiar.setVisibility(View.INVISIBLE);
         }
     }
@@ -225,5 +213,20 @@ public class FragDetalleCuenta extends CustomFragment {
 
         alarmManager.cancel(pendingIntent);
         alarmManager.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + segundosEsperar * 1000, pendingIntent);
+    }
+
+    @Override
+    public void procesarBotonSiNoOk(int boton) {
+        Log.i(TAG, String.format("procesarBotonSiNoOk(...) - boton: %d", boton));
+        if (boton == AlertDialogSiNoOk.BOTON_SI) {
+            String name = bundle.getString(ColCuenta.NOMBRE.toString());
+            if (name != null && cuentaDAO.eliminarUna(name) > 0) {
+                actividadPrincipal().cambiarFragmento(new FragCuentas());
+                actividadPrincipal().actualizarBundles(Cuenta.class, name, null);
+                CustomToast.Build(this, R.string.elimCuentaExitosa);
+            } else {
+                CustomToast.Build(this, R.string.elimCuentaFallida);
+            }
+        }
     }
 }

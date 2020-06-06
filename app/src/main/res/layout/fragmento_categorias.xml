@@ -13,8 +13,15 @@
         android:layout_gravity="center_horizontal"
         android:padding="5dp"
         android:text="@string/listCateg"
-        android:textSize="20sp"
+        android:textSize="22sp"
         android:textStyle="bold" />
+
+    <View
+        style="@style/EstiloImageOriginalWhite"
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
 
     <ListView
         android:layout_width="match_parent"

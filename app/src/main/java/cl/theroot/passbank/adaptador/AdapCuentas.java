@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -36,8 +36,8 @@ public class AdapCuentas extends BaseAdapter{
     }
 
     private class ViewHolder {
-        public ImageButton bajarElemento;
-        public ImageButton subirElemento;
+        public ImageView bajarElemento;
+        public ImageView subirElemento;
         public TextView nombreCuenta;
         public Integer referencia;
     }
@@ -89,51 +89,45 @@ public class AdapCuentas extends BaseAdapter{
         }
 
         final ViewHolder finalViewHolder = viewHolder;
-        viewHolder.bajarElemento.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int i = finalViewHolder.referencia;
-                if (i < cuentas.size() - 1) {
-                    Cuenta buff = cuentas.get(i);
-                    cuentas.set(i, cuentas.get(i + 1));
-                    cuentas.set(i + 1, buff);
-                    notifyDataSetChanged();
+        viewHolder.bajarElemento.setOnClickListener(v -> {
+            int i1 = finalViewHolder.referencia;
+            if (i1 < cuentas.size() - 1) {
+                Cuenta buff = cuentas.get(i1);
+                cuentas.set(i1, cuentas.get(i1 + 1));
+                cuentas.set(i1 + 1, buff);
+                notifyDataSetChanged();
 
-                    CategoriaCuentaDAO categoriaCuentaDAO = new CategoriaCuentaDAO(appContext);
-                    String nombreCuenta = cuentas.get(i).getNombre();
-                    CategoriaCuenta nuevaPosCatCuenta = categoriaCuentaDAO.seleccionarUna(nombreCategoria, nombreCuenta);
-                    nuevaPosCatCuenta.setPosicion(i + 1);
-                    categoriaCuentaDAO.actualizarUna(nuevaPosCatCuenta);
+                CategoriaCuentaDAO categoriaCuentaDAO = new CategoriaCuentaDAO(appContext);
+                String nombreCuenta = cuentas.get(i1).getNombre();
+                CategoriaCuenta nuevaPosCatCuenta = categoriaCuentaDAO.seleccionarUna(nombreCategoria, nombreCuenta);
+                nuevaPosCatCuenta.setPosicion(i1 + 1);
+                categoriaCuentaDAO.actualizarUna(nuevaPosCatCuenta);
 
-                    nombreCuenta = cuentas.get(i + 1).getNombre();
-                    nuevaPosCatCuenta = categoriaCuentaDAO.seleccionarUna(nombreCategoria, nombreCuenta);
-                    nuevaPosCatCuenta.setPosicion(i + 2);
-                    categoriaCuentaDAO.actualizarUna(nuevaPosCatCuenta);
-                }
+                nombreCuenta = cuentas.get(i1 + 1).getNombre();
+                nuevaPosCatCuenta = categoriaCuentaDAO.seleccionarUna(nombreCategoria, nombreCuenta);
+                nuevaPosCatCuenta.setPosicion(i1 + 2);
+                categoriaCuentaDAO.actualizarUna(nuevaPosCatCuenta);
             }
         });
 
-        viewHolder.subirElemento.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int i = finalViewHolder.referencia;
-                if (i > 0) {
-                    Cuenta buff = cuentas.get(i);
-                    cuentas.set(i, cuentas.get(i - 1));
-                    cuentas.set(i - 1, buff);
-                    notifyDataSetChanged();
+        viewHolder.subirElemento.setOnClickListener(v -> {
+            int i12 = finalViewHolder.referencia;
+            if (i12 > 0) {
+                Cuenta buff = cuentas.get(i12);
+                cuentas.set(i12, cuentas.get(i12 - 1));
+                cuentas.set(i12 - 1, buff);
+                notifyDataSetChanged();
 
-                    CategoriaCuentaDAO categoriaCuentaDAO = new CategoriaCuentaDAO(appContext);
-                    String nombreCuenta = cuentas.get(i).getNombre();
-                    CategoriaCuenta nuevaPosCatCuenta = categoriaCuentaDAO.seleccionarUna(nombreCategoria, nombreCuenta);
-                    nuevaPosCatCuenta.setPosicion(i + 1);
-                    categoriaCuentaDAO.actualizarUna(nuevaPosCatCuenta);
+                CategoriaCuentaDAO categoriaCuentaDAO = new CategoriaCuentaDAO(appContext);
+                String nombreCuenta = cuentas.get(i12).getNombre();
+                CategoriaCuenta nuevaPosCatCuenta = categoriaCuentaDAO.seleccionarUna(nombreCategoria, nombreCuenta);
+                nuevaPosCatCuenta.setPosicion(i12 + 1);
+                categoriaCuentaDAO.actualizarUna(nuevaPosCatCuenta);
 
-                    nombreCuenta = cuentas.get(i - 1).getNombre();
-                    nuevaPosCatCuenta = categoriaCuentaDAO.seleccionarUna(nombreCategoria, nombreCuenta);
-                    nuevaPosCatCuenta.setPosicion(i);
-                    categoriaCuentaDAO.actualizarUna(nuevaPosCatCuenta);
-                }
+                nombreCuenta = cuentas.get(i12 - 1).getNombre();
+                nuevaPosCatCuenta = categoriaCuentaDAO.seleccionarUna(nombreCategoria, nombreCuenta);
+                nuevaPosCatCuenta.setPosicion(i12);
+                categoriaCuentaDAO.actualizarUna(nuevaPosCatCuenta);
             }
         });
 

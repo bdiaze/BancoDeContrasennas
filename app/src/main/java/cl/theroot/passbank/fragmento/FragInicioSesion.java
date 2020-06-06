@@ -21,7 +21,7 @@ import cl.theroot.passbank.datos.ParametroDAO;
 import cl.theroot.passbank.datos.nombres.NombreParametro;
 import cl.theroot.passbank.dominio.Parametro;
 
-public class FragInicioSesion extends CustomFragment implements  View.OnClickListener {
+public class FragInicioSesion extends CustomFragment implements  View.OnClickListener, AlertDialogSiNoOk.iProcesarBotonSiNoOk {
     //private static final String TAG = "BdC-FragInicioSesion";
 
     @BindView(R.id.ET_password) EditText ET_contrasenna;
@@ -73,7 +73,10 @@ public class FragInicioSesion extends CustomFragment implements  View.OnClickLis
         try {
             String contrasenna = ET_contrasenna.getText().toString();
             if (contrasenna.isEmpty()) {
-                throw new ExcepcionBancoContrasennas("Error - Llave Maestra Requerida", "Se requiere el ingreso de su Llave Maestra para el inicio de sesión.");
+                throw new ExcepcionBancoContrasennas(
+                        getString(R.string.llaveRequeridaTitulo),
+                        getString(R.string.llaveRequeridaMensaje)
+                );
             }
 
             Parametro parSalt = parametroDAO.seleccionarUno(NombreParametro.SAL_HASH.toString());
@@ -82,7 +85,10 @@ public class FragInicioSesion extends CustomFragment implements  View.OnClickLis
             String[] saltYHashObt = Cifrador.genHashedPass(contrasenna, parSalt.getValor());
             if (!saltYHashObt[1].equals(parHash.getValor())) {
                 ET_contrasenna.setText("");
-                throw new ExcepcionBancoContrasennas("Error - Llave Maestra Incorrecta", "La Llave Maestra ingresada no es correcta, favor intentar de nuevo.");
+                throw new ExcepcionBancoContrasennas(
+                        getString(R.string.llaveIncorrectaTitulo),
+                        getString(R.string.llaveIncorrectaMensaje)
+                );
             }
 
             Parametro parSaltEncr = parametroDAO.seleccionarUno(NombreParametro.SAL_ENCRIPTACION.toString());
@@ -91,5 +97,10 @@ public class FragInicioSesion extends CustomFragment implements  View.OnClickLis
         } catch (ExcepcionBancoContrasennas ex) {
             ex.alertDialog(this);
         }
+    }
+
+    @Override
+    public void procesarBotonSiNoOk(int boton) {
+
     }
 }

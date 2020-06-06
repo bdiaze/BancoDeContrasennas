@@ -10,6 +10,6 @@
         android:text="@string/checkbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="15sp"
+        android:textSize="18sp"
         android:id="@+id/checkBox"/>
 </LinearLayout>

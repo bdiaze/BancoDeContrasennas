@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,8 +29,8 @@ public class AdapCategorias extends BaseAdapter{
     }
 
     private class ViewHolder {
-        public ImageButton bajarElemento;
-        public ImageButton subirElemento;
+        public ImageView bajarElemento;
+        public ImageView subirElemento;
         public TextView categoryName;
         public Integer referencia;
     }
@@ -90,47 +90,41 @@ public class AdapCategorias extends BaseAdapter{
         }
 
         final ViewHolder finalViewHolder = viewHolder;
-        viewHolder.bajarElemento.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int i = finalViewHolder.referencia;
-                if (i < categories.size() - 1) {
-                    Categoria buff = categories.get(i);
-                    categories.set(i, categories.get(i + 1));
-                    categories.set(i + 1, buff);
-                    notifyDataSetChanged();
+        viewHolder.bajarElemento.setOnClickListener(v -> {
+            int i1 = finalViewHolder.referencia;
+            if (i1 < categories.size() - 1) {
+                Categoria buff = categories.get(i1);
+                categories.set(i1, categories.get(i1 + 1));
+                categories.set(i1 + 1, buff);
+                notifyDataSetChanged();
 
-                    CategoriaDAO categoriaDAO = new CategoriaDAO(appContext);
-                    Categoria nuevaPosCategoria = categories.get(i);
-                    nuevaPosCategoria.setPosicion(i + 1);
-                    categoriaDAO.actualizarUna(nuevaPosCategoria.getNombre(), nuevaPosCategoria);
+                CategoriaDAO categoriaDAO = new CategoriaDAO(appContext);
+                Categoria nuevaPosCategoria = categories.get(i1);
+                nuevaPosCategoria.setPosicion(i1 + 1);
+                categoriaDAO.actualizarUna(nuevaPosCategoria.getNombre(), nuevaPosCategoria);
 
-                    nuevaPosCategoria = categories.get(i + 1);
-                    nuevaPosCategoria.setPosicion(i + 2);
-                    categoriaDAO.actualizarUna(nuevaPosCategoria.getNombre(), nuevaPosCategoria);
-                }
+                nuevaPosCategoria = categories.get(i1 + 1);
+                nuevaPosCategoria.setPosicion(i1 + 2);
+                categoriaDAO.actualizarUna(nuevaPosCategoria.getNombre(), nuevaPosCategoria);
             }
         });
 
-        viewHolder.subirElemento.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int i = finalViewHolder.referencia;
-                if (i > 0) {
-                    Categoria buff = categories.get(i);
-                    categories.set(i, categories.get(i - 1));
-                    categories.set(i - 1, buff);
-                    notifyDataSetChanged();
+        viewHolder.subirElemento.setOnClickListener(v -> {
+            int i12 = finalViewHolder.referencia;
+            if (i12 > 0) {
+                Categoria buff = categories.get(i12);
+                categories.set(i12, categories.get(i12 - 1));
+                categories.set(i12 - 1, buff);
+                notifyDataSetChanged();
 
-                    CategoriaDAO categoriaDAO = new CategoriaDAO(appContext);
-                    Categoria nuevaPosCategoria = categories.get(i);
-                    nuevaPosCategoria.setPosicion(i + 1);
-                    categoriaDAO.actualizarUna(nuevaPosCategoria.getNombre(), nuevaPosCategoria);
+                CategoriaDAO categoriaDAO = new CategoriaDAO(appContext);
+                Categoria nuevaPosCategoria = categories.get(i12);
+                nuevaPosCategoria.setPosicion(i12 + 1);
+                categoriaDAO.actualizarUna(nuevaPosCategoria.getNombre(), nuevaPosCategoria);
 
-                    nuevaPosCategoria = categories.get(i - 1);
-                    nuevaPosCategoria.setPosicion(i);
-                    categoriaDAO.actualizarUna(nuevaPosCategoria.getNombre(), nuevaPosCategoria);
-                }
+                nuevaPosCategoria = categories.get(i12 - 1);
+                nuevaPosCategoria.setPosicion(i12);
+                categoriaDAO.actualizarUna(nuevaPosCategoria.getNombre(), nuevaPosCategoria);
             }
         });
 
@@ -145,5 +139,9 @@ public class AdapCategorias extends BaseAdapter{
     public void setOcultarFlechas(boolean estado) {
         ocultarFlechas = estado;
         notifyDataSetChanged();
+    }
+
+    public boolean getOcultarFlechas() {
+        return ocultarFlechas;
     }
 }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioGroup
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:background="@color/white">
+
+<RadioButton
+    android:id="@+id/RB_caracteres"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:padding="10dp"
+    android:layout_weight="1"
+    android:text="@string/caracteres"
+    android:textSize="20sp" />
+
+<View
+    android:id="@+id/divider"
+    style="@style/EstiloImageOriginalWhite"
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:background="?android:attr/listDivider" />
+
+<RadioButton
+    android:id="@+id/RB_palabras"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:padding="10dp"
+    android:layout_weight="1"
+    android:text="@string/palabras"
+    android:textSize="20sp"/>
+
+</RadioGroup>

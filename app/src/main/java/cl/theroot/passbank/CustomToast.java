@@ -25,6 +25,10 @@ public class CustomToast {
         Build(activity.getApplicationContext(), string);
     }
 
+    public static void Build(Context context, int id) {
+        Build(context, context.getString(id));
+    }
+
     public static void Build(Context context, String mensaje) {
         Toast toast = Toast.makeText(context, mensaje, Toast.LENGTH_LONG);
         TextView textView = toast.getView().findViewById(android.R.id.message);

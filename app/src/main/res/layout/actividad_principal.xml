@@ -10,7 +10,6 @@
         android:id="@+id/FL_contenedor"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="15dp" >
-
+        android:padding="15dp">
     </FrameLayout>
 </RelativeLayout>
