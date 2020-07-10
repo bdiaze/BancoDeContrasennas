@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Banco de Contraseñas</string>
+    <string name="canalServRespaldo">Canal del Servicio de Respaldo</string>
+    <string name="canalGeneral">Canal General</string>
+    <string name="canalMenorImportancia">Canal de Menor Importancia</string>
 
     <!-- Actividad Principal -->
     <string name="cerrarAppTitulo">Cerrar la Aplicación</string>
@@ -14,6 +17,7 @@
     <string name="nuevaLlave">Nueva Llave Maestra</string>
     <string name="reintroNuevaLlave">Reintroduzca su nueva llave:</string>
     <string name="crearLlaveMaestra">¡Crear Llave Maestra!</string>
+    <string name="creandoLlaveMaestra">Creando Llave Maestra…</string>
     <string name="importDatos">Importar Datos - Opcional</string>
     <string name="descripRespaldo">Si ya ha usado Banco de Contraseñas con anterioridad, y desea cargar su respaldo creado en Google Drive\n¡Este es el lugar para ello!</string>
     <string name="cuentaSelec">Cuenta Seleccionada</string>
@@ -21,11 +25,14 @@
     <string name="clickSelecCuenta">Click para seleccionar una cuenta</string>
     <string name="introLlaveResp">Introduzca la llave maestra del respaldo:</string>
     <string name="llaveResp">Llave Maestra del Respaldo</string>
-    <string name="inicioSesionDriveFallido">Falló la conexión con Google Drive</string>
+    <string name="inicioSesionDriveFallido">Falló la conexión con Google Drive.</string>
     <string name="falloDescargaRespaldo">Falló la descarga del respaldo de Google Drive</string>
     <string name="respaldoNoEncontrado">No se encontró el respaldo de Google Drive</string>
     <string name="llaveMaestraRespIncorrecta">La Llave Maestra del respaldo no es correcta, favor ingresarla de nuevo.</string>
+    <string name="llaveCreadaTitulo">¡Llave Creada!</string>
+    <string name="llaveCreadaMensaje">Su Llave Maestra fue creada exitosamente.</string>
     <string name="llaveCreadoYRespaldoCargado">Su Llave Maestra fue creada exitosamente, y su respaldo fue cargado correctamente.</string>
+    <string name="cargarRespaldoIniciado">Se dio por iniciado el proceso de carga de respaldo, revise sus notificaciones para ver el progreso.</string>
 
     <!-- Iniciar Sesión -->
     <string name="introLlaveMaestra">Introduzca su Llave Maestra</string>
@@ -42,7 +49,7 @@
     <!-- Cuentas -->
     <string name="listaCuentas">Lista de Cuentas</string>
     <string name="contrCaducada">Contraseña Sin Actualizar</string>
-    <string name="buscarCuenta">Buscar...</string>
+    <string name="buscarCuenta">Buscar…</string>
     <string name="limpiarBusq">Limpiar</string>
     <string name="elimCuentaTitulo">Eliminación de Cuenta</string>
     <string name="elimCuentaMensaje">¿Está seguro que desea eliminar la cuenta %1$s?</string>
@@ -57,7 +64,7 @@
     <string name="descripNoDefin">Error, descripción no definido</string>
     <string name="contraNoDefin">Error, contraseña no definido</string>
     <string name="contraCopiada">Se ha copiado la contraseña al portapapeles</string>
-    <string name="clickParaCopiar">Click sobre la contraseña para\ncopiarla al portapapeles...</string>
+    <string name="clickParaCopiar">Click sobre la contraseña para\ncopiarla al portapapeles…</string>
 
     <!-- Historial de Contraseñas -->
     <string name="histCuenta">Historial de Cuenta</string>
@@ -140,8 +147,8 @@
     <string name="respCreadoExitosamente">¡Tu respaldo fue creado exitosamente!</string>
     <string name="creacionRespFallida">No se pudo crear su respaldo.</string>
     <string name="creandoRespaldoTitulo">Creando Respaldo</string>
-    <string name="creandoRespaldoMensaje">Su respaldo está siendo creado, favor esperar...</string>
-    <string name="debeSeleccionarCuenta">¡Acción Cancelada!\nDebe seleccionar una cuenta antes de realizar el respaldo.</string>
+    <string name="creandoRespaldoMensaje">Su respaldo está siendo creado, favor esperar…</string>
+    <string name="debeSeleccionarCuenta">Debe seleccionar una cuenta antes de realizar el respaldo.</string>
     <string name="respaldoIniciado">Se dio por iniciado el proceso de respaldo, revise sus notificaciones para ver el progreso.</string>
 
     <!-- Acerca De -->
@@ -165,7 +172,7 @@
     <!-- Lista Configuración -->
     <string name="nombreParametro">Nombre Parámetro</string>
     <string name="valorParametro">Valor Parámetro</string>
-    <string name="valor">Ingrese un valor...</string>
+    <string name="valor">Ingrese un valor…</string>
     <string name="configuracionGrabada">Los cambios ejecutados fueron guardados exitosamente.</string>
 
     <!-- Menú Contextual - Generador Contraseñas -->
@@ -200,14 +207,41 @@
     <!-- Alert Dialog -->
     <string name="titulo">Título</string>
     <string name="mensaje">Mensaje</string>
-    <string name="si">Si</string>
-    <string name="no">No</string>
-    <string name="ok">Ok</string>
+    <string name="si">SI</string>
+    <string name="no">NO</string>
+    <string name="ok">OK</string>
 
     <!-- Respaldar Service -->
-    <string name="respServTitulo">Respaldando...</string>
+    <string name="respServTitulo">Respaldando…</string>
     <string name="respServMensaje">Se está efectuando el respaldo a Google Drive.</string>
+    <string name="respEtapaInicResp">Iniciando proceso de creación de respaldo…</string>
+    <string name="respEtapaInicRespError">Ocurrió un error al obtener la cuenta de Google Drive.</string>
+    <string name="respEtapaBuscResp">Buscando respaldos anteriores en Google Drive…</string>
+    <string name="respEtapaBuscRespError">Ocurrió un error al buscar respaldos anteriores.</string>
+    <string name="respEtapaElimResp">Eliminando respaldos anteriores en Google Drive…</string>
+    <string name="respEtapaElimRespError">Ocurrió un error al eliminar respaldos anteriores.</string>
+    <string name="respEtapaSubResp">Subiendo respaldo actual a Google Drive…</string>
+    <string name="respEtapaSubRespError">Ocurrió un error al subir el respaldo actual.</string>
     <string name="respCreadoTitulo">¡Respaldo Creado!</string>
     <string name="respCreadoMensaje">Su respaldo fue creado exitosamente.</string>
-    <string name="respFallidoTitulo">Respaldo Fallido</string>
+    <string name="respFallidoTitulo">Error al Respaldar</string>
+
+    <!-- Cargar Respaldo Service-->
+    <string name="cargRespConfIniTitulo">Configuración Inicial</string>
+    <string name="cargRespConfIniMensaje">Para llevar a cabo la configuración inicial, favor ingresar los datos solicitados.</string>
+    <string name="cargRespServTitulo">Cargando Respaldo…</string>
+    <string name="cargRespEtapInic">Iniciando proceso de carga de respaldo…</string>
+    <string name="cargRespEtapInicError">Ocurrió un error al obtener la cuenta de Google Drive.</string>
+    <string name="cargRespEtapBusc">Buscando respaldos existentes en Google Drive…</string>
+    <string name="cargRespEtapBuscError">Ocurrió un error al buscar respaldos existentes.</string>
+    <string name="cargRespEtapDesc">Descargando último respaldo existente de Google Drive…</string>
+    <string name="cargRespEtapDescError">Ocurrió un error al descargar el último respaldo existente.</string>
+    <string name="cargRespExitoTitulo">¡Respaldo Cargado!</string>
+    <string name="cargRespExitoMensaje">Su respaldo fue cargado exitosamente.</string>
+    <string name="cargRespErrorTitulo">Error al Cargar Respaldo</string>
+    <string name="cargRespErrorSinResp">No se encontró un respaldo para cargar en Google Drive.</string>
+    <string name="cargRespErrorContInc">La Llave Maestra del respaldo no es correcta, favor ingresarla de nuevo.</string>
+    <string name="cargRespErrorReencrContr">No se pudo reencriptar la contraseña de su cuenta %1$s</string>
+    <string name="cargRespErrorCrearContr">No se pudo crear su nueva llave maestra.</string>
+    <string name="excepcionTituloDefecto">¡Atención!</string>
 </resources>

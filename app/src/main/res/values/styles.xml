@@ -4,6 +4,8 @@
         <!-- Customize your theme here. -->
         <item name="colorControlNormal">@color/naranjo05</item>
         <item name="colorAccent">@color/naranjo06</item>
+        <item name="fondoBotonHabilitado">@color/azul07</item>
+        <item name="fondoBotonDeshabilitado">@color/azul03</item>
         <item name="android:windowBackground">@color/white</item> <!-- Color fondo de la aplicación -->
         <item name="android:itemBackground">@color/azul06</item> <!-- Color fondo de los ítems de menús-->
         <item name="android:listDivider">@color/naranjo04</item>
@@ -38,7 +40,7 @@
 
     <style name="EstiloButton" parent="Widget.AppCompat.Button">
         <item name="android:textColor">@color/white</item>
-        <item name="android:backgroundTint">@color/azul07</item>
+        <item name="android:backgroundTint">@color/mi_boton_color_fondo</item>
     </style>
 
     <style name="EstiloImageButton" parent="Widget.AppCompat.ImageButton">

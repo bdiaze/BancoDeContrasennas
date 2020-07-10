@@ -43,7 +43,7 @@ public class DriveServiceHelper {
         return Tasks.call(mExecutor, () -> {
             OutputStream outputStream = new FileOutputStream(targetFile);
             mDriveService.files().get(fileId).executeMediaAndDownloadTo(outputStream);
-
+            outputStream.close();
             return null;
         });
     }

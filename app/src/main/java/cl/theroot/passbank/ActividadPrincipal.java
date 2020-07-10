@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -54,8 +55,6 @@ public class ActividadPrincipal extends AppCompatActivity implements AlertDialog
     private static final String KEY_BLN_SSN_INI = "KEY_BLN_SSN_INI";
     private static final String KEY_STR_LLV_ENC = "KEY_STR_LLV_ENC";
     private static final String KEY_LNG_STP_TME = "KEY_LNG_STP_TME";
-    private static final String KEY_FLT_POS_HOR = "KEY_FLT_POS_HOR";
-    private static final String KEY_FLT_POS_VER = "KEY_FLT_POS_VER";
     private static final String KEY_INT_IDN_ALT = "KEY_INT_IDN_ALT";
     private static final String KEY_SAL_HIS_FRG = "KEY_SAL_HIS_FRG";
     private static final String KEY_SAL_HIS_ARG = "KEY_SAL_HIS_ARG";
@@ -83,12 +82,12 @@ public class ActividadPrincipal extends AppCompatActivity implements AlertDialog
 
             indicadorAlerta = savedInstanceState.getInt(KEY_INT_IDN_ALT);
 
-            if (savedInstanceState.getStringArrayList(KEY_SAL_HIS_FRG) != null) {
-                listaFragmentos = stringsToListaFragmentos(savedInstanceState.getStringArrayList(KEY_SAL_HIS_FRG));
-            }
-            if (savedInstanceState.getStringArrayList(KEY_SAL_HIS_ARG) != null) {
-                listaBundles = stringsToListaBundles(savedInstanceState.getStringArrayList(KEY_SAL_HIS_ARG));
-            }
+            List<String> lista;
+            lista = savedInstanceState.getStringArrayList(KEY_SAL_HIS_FRG);
+            if (lista != null) listaFragmentos = stringsToListaFragmentos(lista);
+
+            lista = savedInstanceState.getStringArrayList(KEY_SAL_HIS_ARG);
+            if (lista != null) listaBundles = stringsToListaBundles(lista);
 
             Class clase = stringToClass(savedInstanceState.getString(KEY_STR_ULT_FRG));
             Bundle bundle = stringToBundle(savedInstanceState.getString(KEY_STR_ULT_ARG));
@@ -106,7 +105,7 @@ public class ActividadPrincipal extends AppCompatActivity implements AlertDialog
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         Log.i(TAG, "onSaveInstanceState(...) - Se inicia etapa onSaveInstanceState del ciclo de vida de la aplicación.");
 
         if (llaveEncrip != null) {
@@ -344,28 +343,28 @@ public class ActividadPrincipal extends AppCompatActivity implements AlertDialog
             listaFragmentos.clear();
             listaBundles.clear();
             for (int i = 0; i < nuevaListaFragmentos.size(); i++) {
-                //Log.i(TAG, "Checkeando fragmento: " + nuevaListaFragmentos.get(i));
+                Log.i(TAG, "Checkeando fragmento: " + nuevaListaFragmentos.get(i));
                 if ((clase == Categoria.class && reqCatName.contains(nuevaListaFragmentos.get(i))) || (clase == Cuenta.class && reqCueName.contains(nuevaListaFragmentos.get(i)))) {
                     if (nuevaListaBundles.get(i) != null) {
                         if ((clase == Categoria.class && nuevaListaBundles.get(i).getString(ColCategoria.NOMBRE.toString()).equals(antiguoValor)) || (clase == Cuenta.class && nuevaListaBundles.get(i).getString(ColCuenta.NOMBRE.toString()).equals(antiguoValor))) {
-                            //Log.i(TAG, "Descartando fragmento: " + nuevaListaFragmentos.get(i));
+                            Log.i(TAG, "Descartando fragmento: " + nuevaListaFragmentos.get(i));
                         } else {
                             if (listaFragmentos.size() == 0 || nuevaListaFragmentos.get(i) != listaFragmentos.get(listaFragmentos.size() - 1)) {
-                                //Log.i(TAG, "Volviendo a agregar fragmento: " + nuevaListaFragmentos.get(i));
+                                Log.i(TAG, "Volviendo a agregar fragmento: " + nuevaListaFragmentos.get(i));
                                 listaFragmentos.add(nuevaListaFragmentos.get(i));
                                 listaBundles.add(nuevaListaBundles.get(i));
                             }
                         }
                     } else {
                         if (listaFragmentos.size() == 0 || nuevaListaFragmentos.get(i) != listaFragmentos.get(listaFragmentos.size() - 1)) {
-                           //Log.i(TAG, "Volviendo a agregar fragmento: " + nuevaListaFragmentos.get(i));
+                           Log.i(TAG, "Volviendo a agregar fragmento: " + nuevaListaFragmentos.get(i));
                             listaFragmentos.add(nuevaListaFragmentos.get(i));
                             listaBundles.add(nuevaListaBundles.get(i));
                         }
                     }
                 } else {
                     if (listaFragmentos.size() == 0 || nuevaListaFragmentos.get(i) != listaFragmentos.get(listaFragmentos.size() - 1)) {
-                        //Log.i(TAG, "Volviendo a agregar fragmento: " + nuevaListaFragmentos.get(i));
+                        Log.i(TAG, "Volviendo a agregar fragmento: " + nuevaListaFragmentos.get(i));
                         listaFragmentos.add(nuevaListaFragmentos.get(i));
                         listaBundles.add(nuevaListaBundles.get(i));
                     }
@@ -529,9 +528,11 @@ public class ActividadPrincipal extends AppCompatActivity implements AlertDialog
         return gson.fromJson(datos, Bundle.class);
     }
 
+    /*
     public boolean isSesionIniciada(){
         return sesionIniciada;
     }
+    */
 
     public String getLlaveEncrip() {
         return llaveEncrip;

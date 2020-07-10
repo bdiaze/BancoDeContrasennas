@@ -13,9 +13,11 @@ public class ExcepcionBancoContrasennas extends Exception {
         this.mensaje = mensaje;
     }
 
+    /*
     public String getTitulo() {
         return titulo;
     }
+    */
 
     public String getMensaje() {
         return mensaje;
@@ -23,9 +25,10 @@ public class ExcepcionBancoContrasennas extends Exception {
 
     public void alertDialog(CustomFragment fragment) {
         AlertDialogSiNoOk alertDialogSiNoOk = new AlertDialogSiNoOk();
+        if (titulo == null) { titulo = fragment.getString(R.string.excepcionTituloDefecto); }
         alertDialogSiNoOk.setTitulo(titulo);
         alertDialogSiNoOk.setMensaje(mensaje);
         alertDialogSiNoOk.setTargetFragment(fragment, 1);
-        alertDialogSiNoOk.show(fragment.getFragmentManager(), TAG);
+        if (fragment.getFragmentManager() != null) alertDialogSiNoOk.show(fragment.getFragmentManager(), TAG);
     }
 }

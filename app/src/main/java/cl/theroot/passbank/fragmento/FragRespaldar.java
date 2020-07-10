@@ -23,13 +23,13 @@ import com.google.api.services.drive.DriveScopes;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cl.theroot.passbank.CustomFragment;
-import cl.theroot.passbank.CustomToast;
+import cl.theroot.passbank.ExcepcionBancoContrasennas;
 import cl.theroot.passbank.R;
 import cl.theroot.passbank.RespaldarService;
 
 import static android.app.Activity.RESULT_OK;
 
-public class FragRespaldar extends CustomFragment {
+public class FragRespaldar extends CustomFragment implements AlertDialogSiNoOk.iProcesarBotonSiNoOk {
     private static final String TAG = "BdC-FragExportar";
     private static final int REQUEST_CODE_SIGN_IN = 1;
 
@@ -70,18 +70,20 @@ public class FragRespaldar extends CustomFragment {
                 getActivity().onBackPressed();
                 return true;
             case R.id.sub_menu_exportar_respaldar:
-                String email = ET_cuentaSeleccionada.getText().toString();
-                if (email.isEmpty()) {
-                    CustomToast.Build(getApplicationContext(), getString(R.string.debeSeleccionarCuenta));
-                    return true;
+                try {
+                    String email = ET_cuentaSeleccionada.getText().toString().trim();
+                    if (email.isEmpty()) {
+                        throw new ExcepcionBancoContrasennas(null, getString(R.string.debeSeleccionarCuenta));
+                    }
+
+                    Log.i(TAG, "onOptionsItemSelected(...) - Iniciando servicio respaldar...");
+                    Intent serviceIntent = new Intent(actividadPrincipal(), RespaldarService.class);
+                    actividadPrincipal().startForegroundService(serviceIntent);
+
+                    throw new ExcepcionBancoContrasennas(null, getString(R.string.respaldoIniciado));
+                } catch (ExcepcionBancoContrasennas e) {
+                    e.alertDialog(FragRespaldar.this);
                 }
-
-                Log.i(TAG, "onOptionsItemSelected(...) - Iniciando servicio respaldar...");
-                Intent serviceIntent = new Intent(actividadPrincipal(), RespaldarService.class);
-                actividadPrincipal().startForegroundService(serviceIntent);
-
-                CustomToast.Build(getApplicationContext(), R.string.respaldoIniciado);
-
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -113,10 +115,16 @@ public class FragRespaldar extends CustomFragment {
                         })
                         .addOnFailureListener(e -> {
                             Log.e(TAG, "GoogleSignIn.getSignedInAccountFromIntent(...) - Error al obtener cuenta de google.", e);
-                            CustomToast.Build(this, R.string.inicioSesionDriveFallido);
+                            ExcepcionBancoContrasennas excepcion = new ExcepcionBancoContrasennas(null, getString(R.string.inicioSesionDriveFallido));
+                            excepcion.alertDialog(FragRespaldar.this);
                         });
             }
         }
         super.onActivityResult(requestCode, resultCode, resultData);
+    }
+
+    @Override
+    public void procesarBotonSiNoOk(int boton) {
+
     }
 }

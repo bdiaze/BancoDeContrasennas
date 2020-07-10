@@ -1,5 +1,7 @@
 package cl.theroot.passbank.dominio;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
 
 import cl.theroot.passbank.datos.nombres.NombreParametro;
@@ -58,6 +60,7 @@ public class Parametro implements Comparable<Parametro>{
         return buff;
     }
 
+    @NonNull
     @Override
     public String toString() {
         Gson gson = new Gson();
@@ -92,31 +95,39 @@ public class Parametro implements Comparable<Parametro>{
         return descripcion;
     }
 
+    /*
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
+    */
 
     public Integer getTipo() {
         return tipo;
     }
 
+    /*
     public void setTipo(Integer tipo) {
         this.tipo = tipo;
     }
+    */
 
     public Integer getMinimo() {
         return minimo;
     }
 
+    /*
     public void setMinimo(Integer minimo) {
         this.minimo = minimo;
     }
+    */
 
     public Integer getMaximo() {
         return maximo;
     }
 
+    /*
     public void setMaximo(Integer maximo) {
         this.maximo = maximo;
     }
+    */
 }

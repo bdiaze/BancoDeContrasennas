@@ -26,10 +26,7 @@ public class CuentaConFecha extends Cuenta {
         }
 
         Integer diasDiferencia = obtenerVejez();
-        if (diasDiferencia != null && diasDiferencia > getValidez()) {
-            return true;
-        }
-        return false;
+        return diasDiferencia != null && diasDiferencia > getValidez();
     }
 
     public Integer obtenerVejez() {

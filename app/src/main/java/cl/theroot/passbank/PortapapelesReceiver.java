@@ -10,16 +10,16 @@ import android.util.Log;
 
 public class PortapapelesReceiver extends BroadcastReceiver {
     private static final String TAG = "BdC-PortapapelesReceiver";
-    public static final String LABEL_CLIPBOARD = "BdC-ClipboardLabel";
+    public static final String LABEL_CLIPBOARD = "Hola";
     public static final int TIEMPO_DEFECTO = 30;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.i(TAG, "PortapapelesReceiver onReceive(...)");
-        ClipboardManager clipboard = (ClipboardManager) context.getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
+        Log.i(TAG, "onReceive(...) - Limpiando Portapapeles.");
+        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         if (clipboard.hasPrimaryClip()) {
             ClipData clip = clipboard.getPrimaryClip();
-            if (clip.getDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+            if (clip != null && clip.getDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
                 clipboard.clearPrimaryClip();
             }
         }

@@ -1,7 +1,6 @@
 package cl.theroot.passbank.dominio;
 
 public class Cuenta implements Comparable<Cuenta> {
-    private static final String TAG = "BdC-Cuenta";
     private String nombre;
     private String descripcion;
     private Integer validez;

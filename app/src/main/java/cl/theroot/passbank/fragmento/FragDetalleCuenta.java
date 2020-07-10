@@ -107,11 +107,12 @@ public class FragDetalleCuenta extends CustomFragment implements AlertDialogSiNo
                         TV_password.setOnClickListener((View v) -> {
                             // Si se está mostrando la contraseña, se agrega al clipboard...
                             if (TV_password.getInputType() != (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
-                                ClipboardManager clipboard = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                                ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
                                 ClipData clip = ClipData.newPlainText(PortapapelesReceiver.LABEL_CLIPBOARD, TV_password.getText());
                                 clipboard.setPrimaryClip(clip);
+                                Log.i(TAG, "TV_password.setOnClickListener(...) - Se copia contraseña a portapapeles.");
 
-                                CustomToast.Build(getActivity(), R.string.contraCopiada);
+                                CustomToast.Build(this, R.string.contraCopiada);
                                 definirLimpiezaPortapapeles();
                             }
                         });
@@ -197,6 +198,7 @@ public class FragDetalleCuenta extends CustomFragment implements AlertDialogSiNo
     }
 
     private void definirLimpiezaPortapapeles() {
+        Log.i(TAG, "definirLimpiezaPortapapeles() - Se define tiempo de espera para limpieza.");
         int segundosEsperar = PortapapelesReceiver.TIEMPO_DEFECTO;
         try {
             Parametro parametro = parametroDAO.seleccionarUno(NombreParametro.SEGUNDOS_PORTAPAPELES);
@@ -207,10 +209,11 @@ public class FragDetalleCuenta extends CustomFragment implements AlertDialogSiNo
             Log.e(TAG, "Error al formatear Segundos en Portapapeles", ex);
         }
 
-        AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(getApplicationContext(), PortapapelesReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(getContext(), PortapapelesReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, 0);
 
+        Log.i(TAG, "definirLimpiezaPortapapeles() - Se establece alarma para la ejecución de la limpieza.");
         alarmManager.cancel(pendingIntent);
         alarmManager.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + segundosEsperar * 1000, pendingIntent);
     }

@@ -18,7 +18,9 @@ public class CategoriaListaCuentas extends Categoria {
         return cuentas;
     }
 
+    /*
     public void setCuentas(List<CuentaConFecha> cuentas) {
         this.cuentas = cuentas;
     }
+    */
 }
